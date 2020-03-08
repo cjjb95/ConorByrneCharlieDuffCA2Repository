@@ -36,7 +36,9 @@ public:
 	void draw();
 	CommandQueue& getCommandQueue();
 	bool hasAlivePlayer() const;
+	bool hasAlivePlayer2() const;
 	bool hasPlayerReachedEnd() const;
+	bool hasPlayer2ReachedEnd() const;
 	void updateSounds();
 
 private:
@@ -85,8 +87,10 @@ private:
 
 	sf::FloatRect mWorldBounds;
 	sf::Vector2f mSpawnPosition;
+	std::array<sf::Vector2f, 2>mSpawnPositions;
 	float mScrollSpeed;
 	Aircraft* mPlayerAircraft;
+	Aircraft* mPlayer2Aircraft;
 
 	std::vector<SpawnPoint>	mEnemySpawnPoints;
 	std::vector<Aircraft*> mActiveEnemies;

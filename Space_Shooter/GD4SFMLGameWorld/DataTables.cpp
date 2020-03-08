@@ -5,7 +5,33 @@
 #include "AircraftID.hpp"
 #include "ProjectileID.hpp"
 #include "PickupID.hpp"
+#include "PlayerID.hpp"
+#include "CategoryID.hpp"
 #include "ParticleID.hpp"
+
+
+std::vector<PlayerData> initializePlayerData()
+{
+	std::vector<PlayerData> data(static_cast<int>(PlayerID::TypeCount));
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::A] = ActionID::MoveLeft;
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::D] = ActionID::MoveRight;
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::W] = ActionID::MoveUp;
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::S] = ActionID::MoveDown;
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::Space] = ActionID::Fire;
+	data[static_cast<int>(PlayerID::Player1)].mKeyBinding[sf::Keyboard::N] = ActionID::LaunchMissile;
+	data[static_cast<int>(PlayerID::Player1)].categoryID = CategoryID::PlayerAircraft;
+
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::Left] = ActionID::MoveLeft;
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::Right] = ActionID::MoveRight;
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::Up] = ActionID::MoveUp;
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::Down] = ActionID::MoveDown;
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::Enter] = ActionID::Fire;
+	data[static_cast<int>(PlayerID::Player2)].mKeyBinding[sf::Keyboard::M] = ActionID::LaunchMissile;
+	data[static_cast<int>(PlayerID::Player2)].categoryID = CategoryID::Player2Aircraft;
+
+
+	return data;
+}
 
 std::vector<AircraftData> initializeAircraftData()
 {
@@ -16,6 +42,13 @@ std::vector<AircraftData> initializeAircraftData()
 	data[static_cast<int>(AircraftID::Eagle)].textureRect = sf::IntRect(0, 0, 48, 64);
 	data[static_cast<int>(AircraftID::Eagle)].texture = TextureID::Entities;
 	data[static_cast<int>(AircraftID::Eagle)].hasRollAnimation = true;
+
+	data[static_cast<int>(AircraftID::Eagle2)].hitpoints = 100;
+	data[static_cast<int>(AircraftID::Eagle2)].speed = 200.f;
+	data[static_cast<int>(AircraftID::Eagle2)].fireInterval = sf::seconds(1);
+	data[static_cast<int>(AircraftID::Eagle2)].textureRect = sf::IntRect(0, 0, 48, 64);
+	data[static_cast<int>(AircraftID::Eagle2)].texture = TextureID::Entities;
+	data[static_cast<int>(AircraftID::Eagle2)].hasRollAnimation = true;
 
 	data[static_cast<int>(AircraftID::Raptor)].hitpoints = 20;
 	data[static_cast<int>(AircraftID::Raptor)].speed = 80.f;

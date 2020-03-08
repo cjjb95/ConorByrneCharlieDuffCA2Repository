@@ -3,7 +3,8 @@
 #include "ParticleNode.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
-
+#include <iostream>
+#include "EmitterNode.hpp"
 
 
 World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds)
@@ -19,8 +20,11 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, mSpawnPosition(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f)
 	, mScrollSpeed(-50.f)
 	, mPlayerAircraft(nullptr)
+	, mPlayer2Aircraft(nullptr)
 	, mEnemySpawnPoints()
 	, mActiveEnemies()
+	, mSpawnPositions()
+
 {
 	mSceneTexture.create(mTarget.getSize().x, mTarget.getSize().y);
 	loadTextures();
@@ -35,6 +39,7 @@ void World::update(sf::Time dt)
 	// Scroll the world, reset player velocity
 	mCamera.move(-mScrollSpeed * dt.asSeconds(),0.f);
 	mPlayerAircraft->setVelocity(0.f, 0.f);
+	mPlayer2Aircraft->setVelocity(0.f, 0.f);
 
 	// Setup commands to destroy entities, and guide missiles
 	destroyEntitiesOutsideView();
@@ -86,9 +91,19 @@ bool World::hasAlivePlayer() const
 	return !mPlayerAircraft->isMarkedForRemoval();
 }
 
+bool World::hasAlivePlayer2() const
+{
+	return !mPlayer2Aircraft->isMarkedForRemoval();
+}
+
 bool World::hasPlayerReachedEnd() const
 {
 	return !mWorldBounds.contains(mPlayerAircraft->getPosition());
+}
+
+bool World::hasPlayer2ReachedEnd() const
+{
+	return !mWorldBounds.contains(mPlayer2Aircraft->getPosition());
 }
 
 void World::updateSounds()
@@ -216,12 +231,26 @@ void World::buildScene()
 	std::unique_ptr<SoundNode> soundNode(new SoundNode(mSounds));
 	mSceneGraph.attachChild(std::move(soundNode));
 
+
+	sf::Vector2f spawnPoint1(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f);
+	sf::Vector2f spawnPoint2((mCamera.getSize().x / 2.f)-60, (mWorldBounds.height - mCamera.getSize().y / 2.f)-60);
+	mSpawnPositions[0] = spawnPoint1;
+	mSpawnPositions[1] = spawnPoint2;
+
 	// Add player's aircraft
 	std::unique_ptr<Aircraft> player(new Aircraft(AircraftID::Eagle, mTextures, mFonts));
 	mPlayerAircraft = player.get();
-	mPlayerAircraft->setPosition(mSpawnPosition);
+	mPlayerAircraft->setPosition(mSpawnPositions[0]);
 	mPlayerAircraft->setRotation(90);
 	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(player));
+
+
+	// Add player 2's aircraft
+	std::unique_ptr<Aircraft> player2(new Aircraft(AircraftID::Eagle2, mTextures, mFonts));
+	mPlayer2Aircraft = player2.get();
+	mPlayer2Aircraft->setPosition(mSpawnPositions[1]);
+	mPlayer2Aircraft->setRotation(90);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(player2));
 
 	addEnemies();
 }
@@ -238,6 +267,13 @@ void World::adaptPlayerPosition()
 	position.y = std::max(position.y, viewBounds.top + borderDistance);
 	position.y = std::min(position.y, viewBounds.top + viewBounds.height - borderDistance);
 	mPlayerAircraft->setPosition(position);
+
+	sf::Vector2f position2 = mPlayer2Aircraft->getPosition();
+	position2.x = std::max(position2.x, viewBounds.left + borderDistance);
+	position2.x = std::min(position2.x, viewBounds.left + viewBounds.width - borderDistance);
+	position2.y = std::max(position2.y, viewBounds.top + borderDistance);
+	position2.y = std::min(position2.y, viewBounds.top + viewBounds.height - borderDistance);
+	mPlayer2Aircraft->setPosition(position2);
 }
 
 void World::adaptPlayerVelocity()
@@ -250,6 +286,16 @@ void World::adaptPlayerVelocity()
 
 	// Add scrolling velocity
 	mPlayerAircraft->accelerate(-mScrollSpeed,0.f);
+
+
+	sf::Vector2f velocity2 = mPlayer2Aircraft->getVelocity();
+
+	// If moving diagonally, reduce velocity (to have always same velocity)
+	if (velocity2.x != 0.f && velocity2.y != 0.f)
+		mPlayer2Aircraft->setVelocity(velocity2 / std::sqrt(2.f));
+
+	// Add scrolling velocity
+	mPlayer2Aircraft->accelerate(-mScrollSpeed, 0.f);
 }
 
 void World::addEnemies()

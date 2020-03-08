@@ -168,6 +168,7 @@
     <ClInclude Include="Pickup.hpp" />
     <ClInclude Include="PickupID.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="PlayerID.hpp" />
     <ClInclude Include="PostEffect.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileID.hpp" />

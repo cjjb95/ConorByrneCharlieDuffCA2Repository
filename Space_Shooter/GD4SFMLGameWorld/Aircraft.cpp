@@ -93,6 +93,14 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 		attachChild(std::move(missileDisplay));
 	}
 
+	if (getCategory() == (static_cast<int>(CategoryID::Player2Aircraft)))
+	{
+		std::unique_ptr<TextNode> missileDisplay(new TextNode(fonts, ""));
+		missileDisplay->setPosition(0, 70);
+		mMissileDisplay = missileDisplay.get();
+		attachChild(std::move(missileDisplay));
+	}
+
 	updateTexts();
 }
 
@@ -140,7 +148,17 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 unsigned int Aircraft::getCategory() const
 {
 	if (isAllied())
-		return static_cast<int>(CategoryID::PlayerAircraft);
+	{
+		if (mType == AircraftID::Eagle)
+		{
+			return static_cast<int>(CategoryID::PlayerAircraft);
+		}
+
+		else if (mType == AircraftID::Eagle2)
+		{
+			return static_cast<int>(CategoryID::Player2Aircraft);
+		}
+	}
 	else
 		return static_cast<int>(CategoryID::EnemyAircraft);
 }
@@ -157,7 +175,7 @@ bool Aircraft::isMarkedForRemoval() const
 
 bool Aircraft::isAllied() const
 {
-	return mType == AircraftID::Eagle;
+	return mType == AircraftID::Eagle || mType == AircraftID::Eagle2;
 }
 
 float Aircraft::getMaxSpeed() const
