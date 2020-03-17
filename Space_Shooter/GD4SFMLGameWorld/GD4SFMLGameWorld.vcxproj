@@ -160,6 +160,7 @@
     <ClInclude Include="MissionStatusID.hpp" />
     <ClInclude Include="MusicID.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />
+    <ClInclude Include="NetworkProtocol.hpp" />
     <ClInclude Include="OptionID.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="ParticleID.hpp" />

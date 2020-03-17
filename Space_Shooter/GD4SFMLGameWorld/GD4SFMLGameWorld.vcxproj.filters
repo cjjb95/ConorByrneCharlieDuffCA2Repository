@@ -180,6 +180,9 @@
     <ClInclude Include="PlayerID.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkProtocol.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entity.cpp">
