@@ -14,6 +14,7 @@ enum class CategoryID
 	EnemyProjectile = 1 << 7,
 	ParticleSystem = 1 << 8,
 	SoundEffect = 1 << 9,
+	Network = 1 << 10,
 
 	Aircraft = PlayerAircraft | Player2Aircraft | AlliedAircraft | EnemyAircraft,
 	Projectile = AlliedProjectile | EnemyProjectile,

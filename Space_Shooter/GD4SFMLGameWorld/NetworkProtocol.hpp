@@ -14,7 +14,7 @@ namespace Server
 		SpawnSelf, //This takes an sf::Int32 value for the aircraft identifier, and two float values for its initial position. These are used to spawn the clients player one aircraft
 		InitialState, //This takes two float values, the world height and the initial scrolling in it, then sends an sf::Int32 with the count of the aircraft in the world, then for each aircraft it sends sf::Int32 identifier and two float values with the position of the aircraft
 		PlayerEvent, //This takes two sf::Int32, the aircraft identifier and the identifier as declared in ActionID.hpp
-		PlayerRealTimeChange, //the same as PlayerEvent but for real time actions. this means we are changing an ongoing state so add a Boolean value to the parameters
+		PlayerRealtimeChange, //the same as PlayerEvent but for real time actions. this means we are changing an ongoing state so add a Boolean value to the parameters
 		PlayerConnect, //This is SpawnSelf but indicates that an aircraft from a different machine is entering the world.
 		PlayerDisconnect, //Sends one sf::Int32 with identifier for aircraft that has disconnected
 		AcceptCoopPartner, //This is used to tell the client that it can spawn a second player. It needs sf::Int32 with id for the new plane and two float values with the position of the aircraft

@@ -86,6 +86,9 @@ CommandQueue& World::getCommandQueue()
 	return mCommandQueue;
 }
 
+
+
+
 bool World::hasAlivePlayer() const
 {
 	return !mPlayerAircraft->isMarkedForRemoval();

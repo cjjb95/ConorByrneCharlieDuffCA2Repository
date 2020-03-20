@@ -13,6 +13,8 @@
 #include "BloomEffect.hpp"
 #include "SoundNode.hpp"
 #include "SoundPlayer.hpp"
+#include "NetworkProtocol.hpp"
+#include "GameActionID.hpp"
 
 #include "SFML/System/NonCopyable.hpp"
 #include "SFML/Graphics/View.hpp"
@@ -89,7 +91,8 @@ private:
 	sf::Vector2f mSpawnPosition;
 	std::array<sf::Vector2f, 2>mSpawnPositions;
 	float mScrollSpeed;
-	Aircraft* mPlayerAircraft;
+	float mScrollSpeedCompensation;
+	std::vector<Aircraft*> mPlayerAircraft;
 	Aircraft* mPlayer2Aircraft;
 
 	std::vector<SpawnPoint>	mEnemySpawnPoints;
