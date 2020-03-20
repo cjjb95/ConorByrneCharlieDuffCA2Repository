@@ -10,30 +10,36 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/Packet.hpp>
 
+
 class MultiplayerGameState : public State
 {
+public:
 	MultiplayerGameState(StateStack& stack, Context context, bool isHost);
 
 	virtual void draw();
 	virtual bool update(sf::Time dt);
 	virtual bool handleEvent(const sf::Event& event);
+	virtual void onActivate();
 	void onDestroy();
 
-	void disableAllRealTimeActions();
+	void disableAllRealtimeActions();
+
 
 private:
 	void updateBroadcastMessage(sf::Time elapsedTime);
 	void handlePacket(sf::Int32 packetType, sf::Packet& packet);
 
+
 private:
 	typedef std::unique_ptr<Player> PlayerPtr;
+
 
 private:
 	World mWorld;
 	sf::RenderWindow& mWindow;
-	TextureHolder& mTextHolder;
+	TextureHolder& mTextureHolder;
 
-	std::map <int, PlayerPtr> mPlayers;
+	std::map<int, PlayerPtr> mPlayers;
 	std::vector<sf::Int32> mLocalPlayerIdentifiers;
 	sf::TcpSocket mSocket;
 	bool mConnected;
@@ -56,5 +62,4 @@ private:
 	bool mGameStarted;
 	sf::Time mClientTimeout;
 	sf::Time mTimeSinceLastPacket;
-
 };
