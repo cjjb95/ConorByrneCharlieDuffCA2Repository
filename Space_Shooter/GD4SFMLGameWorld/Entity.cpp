@@ -56,6 +56,11 @@ void Entity::destroy()
 	mHitpoints = 0;
 }
 
+void Entity::remove()
+{
+	destroy();
+}
+
 bool Entity::isDestroyed() const
 {
 	return mHitpoints <= 0;
