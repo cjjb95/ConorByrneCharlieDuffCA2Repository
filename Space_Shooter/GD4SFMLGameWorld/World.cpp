@@ -1,13 +1,14 @@
 #include "World.hpp"
 #include "ParticleID.hpp"
 #include "ParticleNode.hpp"
+#include "NetworkNode.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <iostream>
 #include "EmitterNode.hpp"
 
 
-World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds)
+World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked)
 	: mTarget(outputTarget)
 	, mSceneTexture()
 	, mCamera(outputTarget.getDefaultView())
@@ -19,11 +20,14 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, mWorldBounds(0.f, 0.f, 2000.f, mCamera.getSize().y)
 	, mSpawnPosition(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f)
 	, mScrollSpeed(-50.f)
-	, mPlayerAircraft(nullptr)
-	, mPlayer2Aircraft(nullptr)
+	,mScrollSpeedCompensation(1.f)
+	, mPlayerAircraft()
 	, mEnemySpawnPoints()
 	, mActiveEnemies()
 	, mSpawnPositions()
+	,mNetworkedWorld(networked)
+	,mNetworkNode(nullptr)
+	,mFinishSprite(nullptr)
 
 {
 	mSceneTexture.create(mTarget.getSize().x, mTarget.getSize().y);
@@ -37,9 +41,11 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 void World::update(sf::Time dt)
 {
 	// Scroll the world, reset player velocity
-	mCamera.move(-mScrollSpeed * dt.asSeconds(),0.f);
-	mPlayerAircraft->setVelocity(0.f, 0.f);
-	mPlayer2Aircraft->setVelocity(0.f, 0.f);
+	mCamera.move(-mScrollSpeed * dt.asSeconds()*mScrollSpeedCompensation,0.f);
+	for (Aircraft* player : mPlayerAircraft)
+	{
+		player->setVelocity(0.f, 0.f);
+	}
 
 	// Setup commands to destroy entities, and guide missiles
 	destroyEntitiesOutsideView();
@@ -52,6 +58,10 @@ void World::update(sf::Time dt)
 
 	// Collision detection and response (may destroy entities)
 	handleCollisions();
+
+	// Remove aircrafts that were destroyed (World::removeWrecks() only destroys the entities, not the pointers in mPlayerAircraft)
+	auto firstToRemove = std::remove_if(mPlayerAircraft.begin(), mPlayerAircraft.end(), std::mem_fn(&Aircraft::isMarkedForRemoval));
+	mPlayerAircraft.erase(firstToRemove, mPlayerAircraft.end());
 
 	// Remove all destroyed entities, create new ones
 	mSceneGraph.removeWrecks();
@@ -86,33 +96,103 @@ CommandQueue& World::getCommandQueue()
 	return mCommandQueue;
 }
 
+void World::createPickup(sf::Vector2f position, PickupID type)
+{
+	std::unique_ptr<Pickup> pickup(new Pickup(type, mTextures));
+	pickup->setPosition(position);
+	pickup->setVelocity(0.f, 1.f);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(pickup));
+}
+
+Aircraft* World::getAircraft(int identifier) const
+{
+	for (Aircraft* a : mPlayerAircraft)
+	{
+		if (a->getIdentifier() == identifier)
+			return a;
+	}
+
+	return nullptr;
+}
 
 
+void World::removeAircraft(int identifier)
+{
+	Aircraft* aircraft = getAircraft(identifier);
+	if (aircraft)
+	{
+		aircraft->destroy();
+		mPlayerAircraft.erase(std::find(mPlayerAircraft.begin(), mPlayerAircraft.end(), aircraft));
+	}
+}
+
+
+Aircraft* World::addAircraft(int identifier)
+{
+	std::unique_ptr<Aircraft> player(new Aircraft(AircraftID::Eagle, mTextures, mFonts));
+	player->setPosition(mCamera.getCenter());
+	player->setIdentifier(identifier);
+
+	mPlayerAircraft.push_back(player.get());
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(player));
+	return mPlayerAircraft.back();
+}
 
 bool World::hasAlivePlayer() const
 {
-	return !mPlayerAircraft->isMarkedForRemoval();
+	return mPlayerAircraft.size() > 0;
 }
 
-bool World::hasAlivePlayer2() const
+
+void World::setCurrentBattleFieldPosition(float lineY)
 {
-	return !mPlayer2Aircraft->isMarkedForRemoval();
+	mCamera.setCenter(mCamera.getCenter().x, lineY - mCamera.getSize().y / 2);
+	mSpawnPosition.y = mWorldBounds.height;
+}
+
+
+bool World::pollGameAction(Action& out)
+{
+	return mNetworkNode->pollGameAction(out);
+}
+
+void World::setWorldHeight(float height)
+{
+	mWorldBounds.height = height;
 }
 
 bool World::hasPlayerReachedEnd() const
 {
-	return !mWorldBounds.contains(mPlayerAircraft->getPosition());
-}
-
-bool World::hasPlayer2ReachedEnd() const
-{
-	return !mWorldBounds.contains(mPlayer2Aircraft->getPosition());
+	if (Aircraft* aircraft = getAircraft(1))
+	{
+		return !mWorldBounds.contains(aircraft->getPosition());
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void World::updateSounds()
 {
+	sf::Vector2f listenerPosition;
+
+	// 0 players (multiplayer mode, until server is connected) -> view center
+	if (mPlayerAircraft.empty())
+	{
+		listenerPosition = mCamera.getCenter();
+	}
+
+	// 1 or more players -> mean position between all aircrafts
+	else
+	{
+		for (Aircraft* aircraft : mPlayerAircraft)
+			listenerPosition += aircraft->getWorldPosition();
+
+		listenerPosition /= static_cast<float>(mPlayerAircraft.size());
+	}
 	//Set the listener to the player position
-	mSounds.setListenPosition(mPlayerAircraft->getWorldPosition());
+	mSounds.setListenPosition(listenerPosition);
 	//Remove unused sounds
 	mSounds.removeStoppedSounds();
 
@@ -205,22 +285,19 @@ void World::buildScene()
 
 	// Prepare the tiled background
 
-	sf::Texture& texture = mTextures.get(TextureID::Space);
+	sf::Texture& texture = mTextures.get(TextureID::Jungle);
 	sf::IntRect textureRect(mWorldBounds);
 	texture.setRepeated(true);
-	
 
 	// Add the background sprite to the scene
 	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));
 	backgroundSprite->setPosition(mWorldBounds.left, mWorldBounds.top);
-
 	mSceneLayers[static_cast<int>(LayerID::Background)]->attachChild(std::move(backgroundSprite));
 
 	//Add the finish line to the scene
 	sf::Texture& finishTexture = mTextures.get(TextureID::FinishLine);
 	std::unique_ptr<SpriteNode> finishSprite(new SpriteNode(finishTexture));
-	finishSprite->setPosition(2010.f, 0.f);
-	finishSprite->setRotation(90);
+	finishSprite->setPosition(0.f, -76.f);
 	mSceneLayers[static_cast<int>(LayerID::Background)]->attachChild(std::move(finishSprite));
 
 	//Add particle nodes for smoke and propellant
@@ -234,75 +311,56 @@ void World::buildScene()
 	std::unique_ptr<SoundNode> soundNode(new SoundNode(mSounds));
 	mSceneGraph.attachChild(std::move(soundNode));
 
-
-	sf::Vector2f spawnPoint1(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f);
-	sf::Vector2f spawnPoint2((mCamera.getSize().x / 2.f)-60, (mWorldBounds.height - mCamera.getSize().y / 2.f)-60);
-	mSpawnPositions[0] = spawnPoint1;
-	mSpawnPositions[1] = spawnPoint2;
-
-	// Add player's aircraft
-	std::unique_ptr<Aircraft> player(new Aircraft(AircraftID::Eagle, mTextures, mFonts));
-	mPlayerAircraft = player.get();
-	mPlayerAircraft->setPosition(mSpawnPositions[0]);
-	mPlayerAircraft->setRotation(90);
-	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(player));
-
-
-	// Add player 2's aircraft
-	std::unique_ptr<Aircraft> player2(new Aircraft(AircraftID::Eagle2, mTextures, mFonts));
-	mPlayer2Aircraft = player2.get();
-	mPlayer2Aircraft->setPosition(mSpawnPositions[1]);
-	mPlayer2Aircraft->setRotation(90);
-	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(player2));
+	// Add network node, if necessary
+	if (mNetworkedWorld)
+	{
+		std::unique_ptr<NetworkNode> networkNode(new NetworkNode());
+		mNetworkNode = networkNode.get();
+		mSceneGraph.attachChild(std::move(networkNode));
+	}
 
 	addEnemies();
 }
+
 
 void World::adaptPlayerPosition()
 {
 	// Keep player's position inside the screen bounds, at least borderDistance units from the border
 	sf::FloatRect viewBounds = getViewBounds();
 	const float borderDistance = 40.f;
-
-	sf::Vector2f position = mPlayerAircraft->getPosition();
-	position.x = std::max(position.x, viewBounds.left + borderDistance);
-	position.x = std::min(position.x, viewBounds.left + viewBounds.width - borderDistance);
-	position.y = std::max(position.y, viewBounds.top + borderDistance);
-	position.y = std::min(position.y, viewBounds.top + viewBounds.height - borderDistance);
-	mPlayerAircraft->setPosition(position);
-
-	sf::Vector2f position2 = mPlayer2Aircraft->getPosition();
-	position2.x = std::max(position2.x, viewBounds.left + borderDistance);
-	position2.x = std::min(position2.x, viewBounds.left + viewBounds.width - borderDistance);
-	position2.y = std::max(position2.y, viewBounds.top + borderDistance);
-	position2.y = std::min(position2.y, viewBounds.top + viewBounds.height - borderDistance);
-	mPlayer2Aircraft->setPosition(position2);
+	for (Aircraft* aircraft : mPlayerAircraft)
+	{
+		sf::Vector2f position = aircraft->getPosition();
+		position.x = std::max(position.x, viewBounds.left + borderDistance);
+		position.x = std::min(position.x, viewBounds.left + viewBounds.width - borderDistance);
+		position.y = std::max(position.y, viewBounds.top + borderDistance);
+		position.y = std::min(position.y, viewBounds.top + viewBounds.height - borderDistance);
+		aircraft->setPosition(position);
+	}
 }
 
 void World::adaptPlayerVelocity()
 {
-	sf::Vector2f velocity = mPlayerAircraft->getVelocity();
+	for (Aircraft* aircraft : mPlayerAircraft)
+	{
+		sf::Vector2f velocity = aircraft->getVelocity();
 
-	// If moving diagonally, reduce velocity (to have always same velocity)
-	if (velocity.x != 0.f && velocity.y != 0.f)
-		mPlayerAircraft->setVelocity(velocity / std::sqrt(2.f));
+		// If moving diagonally, reduce velocity (to have always same velocity)
+		if (velocity.x != 0.f && velocity.y != 0.f)
+			aircraft->setVelocity(velocity / std::sqrt(2.f));
 
-	// Add scrolling velocity
-	mPlayerAircraft->accelerate(-mScrollSpeed,0.f);
-
-
-	sf::Vector2f velocity2 = mPlayer2Aircraft->getVelocity();
-
-	// If moving diagonally, reduce velocity (to have always same velocity)
-	if (velocity2.x != 0.f && velocity2.y != 0.f)
-		mPlayer2Aircraft->setVelocity(velocity2 / std::sqrt(2.f));
-
-	// Add scrolling velocity
-	mPlayer2Aircraft->accelerate(-mScrollSpeed, 0.f);
+		// Add scrolling velocity
+		aircraft->accelerate(0.f, mScrollSpeed);
+	}
 }
 
 void World::addEnemies()
 {
+	if (mNetworkedWorld)
+	{
+		return;
+	}
+
 	// Add enemies to the spawn point container
 	addEnemy(AircraftID::Raptor, 500.f, 0.f);
 	addEnemy(AircraftID::Raptor, 1000.f, 500.f);
@@ -354,7 +412,12 @@ void World::spawnEnemies()
 
 		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.type, mTextures, mFonts));
 		enemy->setPosition(spawn.x, spawn.y);
-		enemy->setRotation(270.f);
+		enemy->setRotation(180.f);
+
+		if (mNetworkedWorld)
+		{
+			enemy->disablePickups();
+		}
 
 		mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(enemy));
 
@@ -362,6 +425,7 @@ void World::spawnEnemies()
 		mEnemySpawnPoints.pop_back();
 	}
 }
+
 
 void World::destroyEntitiesOutsideView()
 {

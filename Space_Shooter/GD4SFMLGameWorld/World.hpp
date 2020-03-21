@@ -22,6 +22,7 @@
 
 #include <array>
 
+class NetworkNode;
 
 //Forward declaration
 namespace sf
@@ -33,15 +34,32 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds);
+	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked = false);
 	void update(sf::Time dt);
 	void draw();
 	CommandQueue& getCommandQueue();
+
+	Aircraft* addAircraft(int identifier);
+	void removeAircraft(int identifier);
+	void setCurrentBattleFieldPosition(float lineY);
+	void setWorldHeight(float height);
+
+	sf::FloatRect getViewBounds() const;
+
+	void addEnemy(AircraftID type, float relX, float relY);
+
 	bool hasAlivePlayer() const;
 	bool hasAlivePlayer2() const;
 	bool hasPlayerReachedEnd() const;
 	bool hasPlayer2ReachedEnd() const;
 	void updateSounds();
+
+	void createPickup(sf::Vector2f position, PickupID type);
+
+	Aircraft* getAircraft(int identifier) const;
+	bool pollGameAction(Action& out);
+	void setWorldScrollCompensation(float compensation);
+
 
 private:
 	void loadTextures();
@@ -52,10 +70,9 @@ private:
 
 	void spawnEnemies();
 	void addEnemies();
-	void addEnemy(AircraftID type, float relX, float relY);
 
 	sf::FloatRect getBattlefieldBounds() const;
-	sf::FloatRect getViewBounds() const;
+
 
 	void destroyEntitiesOutsideView();
 
@@ -93,10 +110,12 @@ private:
 	float mScrollSpeed;
 	float mScrollSpeedCompensation;
 	std::vector<Aircraft*> mPlayerAircraft;
-	Aircraft* mPlayer2Aircraft;
 
 	std::vector<SpawnPoint>	mEnemySpawnPoints;
 	std::vector<Aircraft*> mActiveEnemies;
 
 	BloomEffect	mBloomEffect;
+	bool mNetworkedWorld;
+	NetworkNode* mNetworkNode;
+	SpriteNode* mFinishSprite;
 };

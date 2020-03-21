@@ -65,7 +65,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context,
 	sf::IpAddress ip;
 	if (isHost)
 	{
-		mGameServer.reset(new mGameServer(sf::Vector2f(mWindow.getSize())));
+		mGameServer.reset(new GameServer(sf::Vector2f(mWindow.getSize())));
 		ip = "127.0.0.1";
 	}
 	else
@@ -79,7 +79,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context,
 
 	mSocket.setBlocking(false);
 
-	context.music->play(MusicID::MissionTheme)
+	context.music->play(MusicID::MissionTheme);
 }
 
 void MultiplayerGameState::draw()

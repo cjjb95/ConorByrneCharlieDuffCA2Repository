@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -158,6 +158,7 @@
     <ClInclude Include="LayerID.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MissionStatusID.hpp" />
+    <ClInclude Include="MultiplayerGameState.hpp" />
     <ClInclude Include="MusicID.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />
     <ClInclude Include="NetworkProtocol.hpp" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="MultiplayerGameState.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
     <ClCompile Include="PauseState.cpp" />
