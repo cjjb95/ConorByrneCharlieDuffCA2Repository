@@ -38,6 +38,11 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	mCamera.setCenter(mSpawnPosition);
 }
 
+void World::setWorldScrollCompensation(float compensation)
+{
+	mScrollSpeedCompensation = compensation;
+}
+
 void World::update(sf::Time dt)
 {
 	// Scroll the world, reset player velocity
@@ -390,10 +395,15 @@ void World::addEnemies()
 	addEnemy(AircraftID::Raptor, 0.f, 4400.f);
 
 	// Sort all enemies according to their y value, such that lower enemies are checked first for spawning
+	sortEnemies();
+}
+
+void World::sortEnemies()
+{
 	std::sort(mEnemySpawnPoints.begin(), mEnemySpawnPoints.end(), [](SpawnPoint lhs, SpawnPoint rhs)
-	{
-		return lhs.y < rhs.y;
-	});
+		{
+			return lhs.y < rhs.y;
+		});
 }
 
 void World::addEnemy(AircraftID type, float relX, float relY)

@@ -15,6 +15,14 @@ public:
 	virtual sf::FloatRect getBoundingRect() const;
 	virtual bool isMarkedForRemoval() const;
 
+	virtual void remove();
+	void disablePickups();
+
+	void setIdentifier(int identifier);
+	int getIdentifier() const;
+	int getMissileAmmo() const;
+	void setMissileAmmo(int ammo);
+
 	float getMaxSpeed() const;
 	void fire();
 	void launchMissile();
@@ -61,6 +69,10 @@ private:
 	bool mPlayedExplosionSound;
 	bool mSpawnedPickup;
 	int mSpreadLevel;
+	
+	bool mPickupsEnabled;
+	bool mExplosionBegan;
+	int mIdentifier;
 
 	int mMissileAmmo;
 	float mTravelledDistance;

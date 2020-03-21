@@ -5,6 +5,7 @@
 #include "Pickup.hpp"
 #include "CommandQueue.hpp"
 #include "SoundNode.hpp"
+#include "NetworkNode.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include "SFML/Graphics/RenderStates.hpp"
@@ -44,8 +45,10 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 	, mIsFiring(false)
 	, mIsLaunchingMissile(false)
 	, mShowExplosion(true)
+	, mExplosionBegan(false)
 	, mPlayedExplosionSound(false)
 	, mSpawnedPickup(false)
+	, mPickupsEnabled(true)
 	, mIsMarkedForRemoval(false)
 	, mFireRateLevel(1)
 	, mSpreadLevel(1)
@@ -55,6 +58,7 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 	, mDirectionIndex(0)
 	, mHealthDisplay(nullptr)
 	, mMissileDisplay(nullptr)
+	, mIdentifier(0)
 {
 	mExplosion.setFrameSize(sf::Vector2i(256, 256));
 	mExplosion.setNumFrames(16);
@@ -93,16 +97,20 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 		attachChild(std::move(missileDisplay));
 	}
 
-	if (getCategory() == (static_cast<int>(CategoryID::Player2Aircraft)))
-	{
-		std::unique_ptr<TextNode> missileDisplay(new TextNode(fonts, ""));
-		missileDisplay->setPosition(0, 70);
-		mMissileDisplay = missileDisplay.get();
-		attachChild(std::move(missileDisplay));
-	}
-
 	updateTexts();
 }
+
+
+int Aircraft::getMissileAmmo() const
+{
+	return mMissileAmmo;
+}
+
+void Aircraft::setMissileAmmo(int ammo)
+{
+	mMissileAmmo = ammo;
+}
+
 
 
 void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -112,6 +120,12 @@ void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	else
 		target.draw(mSprite, states);
 }
+
+void Aircraft::disablePickups()
+{
+	mPickupsEnabled = false;
+}
+
 
 void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 {
@@ -148,17 +162,7 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 unsigned int Aircraft::getCategory() const
 {
 	if (isAllied())
-	{
-		if (mType == AircraftID::Eagle)
-		{
-			return static_cast<int>(CategoryID::PlayerAircraft);
-		}
-
-		else if (mType == AircraftID::Eagle2)
-		{
-			return static_cast<int>(CategoryID::Player2Aircraft);
-		}
-	}
+		return static_cast<int>(CategoryID::PlayerAircraft);
 	else
 		return static_cast<int>(CategoryID::EnemyAircraft);
 }
@@ -171,6 +175,21 @@ sf::FloatRect Aircraft::getBoundingRect() const
 bool Aircraft::isMarkedForRemoval() const
 {
 	return isDestroyed() && (mExplosion.isFinished() || !mShowExplosion);
+}
+
+void Aircraft::remove()
+{
+	Entity::remove();
+	mShowExplosion = false;
+}
+int	Aircraft::getIdentifier() const
+{
+	return mIdentifier;
+}
+
+void Aircraft::setIdentifier(int identifier)
+{
+	mIdentifier = identifier;
 }
 
 bool Aircraft::isAllied() const

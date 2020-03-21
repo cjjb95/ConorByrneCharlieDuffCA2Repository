@@ -47,11 +47,10 @@ public:
 	sf::FloatRect getViewBounds() const;
 
 	void addEnemy(AircraftID type, float relX, float relY);
+	void sortEnemies();
 
 	bool hasAlivePlayer() const;
-	bool hasAlivePlayer2() const;
 	bool hasPlayerReachedEnd() const;
-	bool hasPlayer2ReachedEnd() const;
 	void updateSounds();
 
 	void createPickup(sf::Vector2f position, PickupID type);
