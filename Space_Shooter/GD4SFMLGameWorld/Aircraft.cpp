@@ -100,7 +100,6 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 	updateTexts();
 }
 
-
 int Aircraft::getMissileAmmo() const
 {
 	return mMissileAmmo;
@@ -110,7 +109,6 @@ void Aircraft::setMissileAmmo(int ammo)
 {
 	mMissileAmmo = ammo;
 }
-
 
 
 void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -125,7 +123,6 @@ void Aircraft::disablePickups()
 {
 	mPickupsEnabled = false;
 }
-
 
 void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 {
@@ -182,19 +179,10 @@ void Aircraft::remove()
 	Entity::remove();
 	mShowExplosion = false;
 }
-int	Aircraft::getIdentifier() const
-{
-	return mIdentifier;
-}
-
-void Aircraft::setIdentifier(int identifier)
-{
-	mIdentifier = identifier;
-}
 
 bool Aircraft::isAllied() const
 {
-	return mType == AircraftID::Eagle || mType == AircraftID::Eagle2;
+	return mType == AircraftID::Eagle;
 }
 
 float Aircraft::getMaxSpeed() const
@@ -249,6 +237,17 @@ void Aircraft::launchMissile()
 	}
 }
 
+int	Aircraft::getIdentifier() const
+{
+	return mIdentifier;
+}
+
+void Aircraft::setIdentifier(int identifier)
+{
+	mIdentifier = identifier;
+}
+
+
 void Aircraft::updateMovementPattern(sf::Time dt)
 {
 	// Enemy airplane: Movement pattern
@@ -263,7 +262,7 @@ void Aircraft::updateMovementPattern(sf::Time dt)
 		}
 
 		// Compute velocity from direction
-		float radians = toRadian(directions[mDirectionIndex].angle + 180.f);
+		float radians = toRadian(directions[mDirectionIndex].angle + 90.f);
 		float vx = getMaxSpeed() * std::cos(radians);
 		float vy = getMaxSpeed() * std::sin(radians);
 
@@ -318,8 +317,7 @@ void Aircraft::createBullets(SceneNode& node, const TextureHolder& textures) con
 	switch (mSpreadLevel)
 	{
 	case 1:
-		//changed projectiles to spawn on the left of the ship
-		createProjectile(node, type, -1.0f, 0.0f, textures);
+		createProjectile(node, type, 0.0f, 0.5f, textures);
 		break;
 
 	case 2:
@@ -340,14 +338,11 @@ void Aircraft::createProjectile(SceneNode& node, ProjectileID type, float xOffse
 	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 
 	sf::Vector2f offset(xOffset * mSprite.getGlobalBounds().width, yOffset * mSprite.getGlobalBounds().height);
-	//projectiles now fire horizontally 
-	sf::Vector2f velocity(-projectile->getMaxSpeed(),0);
+	sf::Vector2f velocity(0, projectile->getMaxSpeed());
 
 	float sign = isAllied() ? -1.f : +1.f;
 	projectile->setPosition(getWorldPosition() + offset * sign);
 	projectile->setVelocity(velocity * sign);
-	//rotates projectiles
-	projectile->setRotation(90);
 	node.attachChild(std::move(projectile));
 }
 
@@ -364,14 +359,11 @@ void Aircraft::createPickup(SceneNode& node, const TextureHolder& textures) cons
 void Aircraft::updateTexts()
 {
 	mHealthDisplay->setString(toString(getHitpoints()) + " HP");
-	mHealthDisplay->setPosition(-10.f, 50.f);
+	mHealthDisplay->setPosition(0.f, 50.f);
 	mHealthDisplay->setRotation(-getRotation());
 
 	if (mMissileDisplay)
 	{
-		//fixed position of missile display
-		mMissileDisplay->setPosition(10.f, 50.f);
-		mMissileDisplay->setRotation(-getRotation());
 		if (mMissileAmmo == 0)
 			mMissileDisplay->setString("");
 		else

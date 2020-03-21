@@ -3,30 +3,30 @@
 #include "Utility.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include<SFML/Network/IpAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 
-#include<fstream>
+#include <fstream>
 
 
 sf::IpAddress getAddressFromFile()
 {
-	{
+	{ // Try to open existing file (RAII block)
 		std::ifstream inputFile("ip.txt");
 		std::string ipAddress;
 		if (inputFile >> ipAddress)
 			return ipAddress;
 	}
 
+	// If open/read failed, create new file
 	std::ofstream outputFile("ip.txt");
 	std::string localAddress = "127.0.0.1";
 	outputFile << localAddress;
 	return localAddress;
 }
 
-MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context,
-	bool isHost) : State(stack, context)
-	, mWorld(*context.window, *context.fonts,
-		*context.sounds, true)
+MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, bool isHost)
+	: State(stack, context)
+	, mWorld(*context.window, *context.fonts, *context.sounds, true)
 	, mWindow(*context.window)
 	, mTextureHolder(*context.textures)
 	, mConnected(false)
@@ -41,21 +41,21 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context,
 	mBroadcastText.setFont(context.fonts->get(FontID::Main));
 	mBroadcastText.setPosition(1024.f / 2, 100.f);
 
-	mPlayerInvitationText.setFont(context.fonts -> get(FontID::Main));
+	mPlayerInvitationText.setFont(context.fonts->get(FontID::Main));
 	mPlayerInvitationText.setCharacterSize(20);
 	mPlayerInvitationText.setFillColor(sf::Color::White);
 	mPlayerInvitationText.setString("Press Enter to spawn player 2");
 	mPlayerInvitationText.setPosition(1000 - mPlayerInvitationText.getLocalBounds().width, 760 - mPlayerInvitationText.getLocalBounds().height);
 
-	//We reuse this text for "Attempt to connect" and "Failed to connect" messages
+	// We reuse this text for "Attempt to connect" and "Failed to connect" messages
 	mFailedConnectionText.setFont(context.fonts->get(FontID::Main));
-	mFailedConnectionText.setString("Attempting to connect....");
+	mFailedConnectionText.setString("Attempting to connect...");
 	mFailedConnectionText.setCharacterSize(35);
 	mFailedConnectionText.setFillColor(sf::Color::White);
 	centreOrigin(mFailedConnectionText);
 	mFailedConnectionText.setPosition(mWindow.getSize().x / 2.f, mWindow.getSize().y / 2.f);
 
-	//Render a "establishing connection" frame for user feedback
+	// Render a "establishing connection" frame for user feedback
 	mWindow.clear(sf::Color::Black);
 	mWindow.draw(mFailedConnectionText);
 	mWindow.display();
@@ -75,10 +75,12 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context,
 
 	if (mSocket.connect(ip, ServerPort, sf::seconds(5.f)) == sf::TcpSocket::Done)
 		mConnected = true;
-	mFailedConnectionClock.restart();
+	else
+		mFailedConnectionClock.restart();
 
 	mSocket.setBlocking(false);
 
+	// Play game theme
 	context.music->play(MusicID::MissionTheme);
 }
 
@@ -88,7 +90,7 @@ void MultiplayerGameState::draw()
 	{
 		mWorld.draw();
 
-		//Broadcast messages in default view
+		// Broadcast messages in default view
 		mWindow.setView(mWindow.getDefaultView());
 
 		if (!mBroadcasts.empty())
@@ -112,22 +114,25 @@ void MultiplayerGameState::onDestroy()
 {
 	if (!mHost && mConnected)
 	{
-		//Inform server this client is dying
+		// Inform server this client is dying
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>
-			(Client::PacketType::Quit);
+		packet << static_cast<sf::Int32>(Client::PacketType::Quit);
 		mSocket.send(packet);
 	}
 }
+
 bool MultiplayerGameState::update(sf::Time dt)
 {
+	// Connected to server: Handle all the network logic
 	if (mConnected)
 	{
 		mWorld.update(dt);
 
+		// Remove players whose aircrafts were destroyed
 		bool foundLocalPlane = false;
-		for (auto itr = mPlayers.begin(); itr != mPlayers.end;)
+		for (auto itr = mPlayers.begin(); itr != mPlayers.end(); )
 		{
+			// Check if there are no more local planes for remote clients
 			if (std::find(mLocalPlayerIdentifiers.begin(), mLocalPlayerIdentifiers.end(), itr->first) != mLocalPlayerIdentifiers.end())
 			{
 				foundLocalPlane = true;
@@ -137,10 +142,11 @@ bool MultiplayerGameState::update(sf::Time dt)
 			{
 				itr = mPlayers.erase(itr);
 
+				// No more players left: Mission failed
 				if (mPlayers.empty())
 					requestStackPush(StateID::GameOver);
 			}
-			else 
+			else
 			{
 				++itr;
 			}
@@ -151,17 +157,20 @@ bool MultiplayerGameState::update(sf::Time dt)
 			requestStackPush(StateID::GameOver);
 		}
 
+		// Only handle the realtime input if the window has focus and the game is unpaused
 		if (mActiveState && mHasFocus)
 		{
 			CommandQueue& commands = mWorld.getCommandQueue();
-			for (auto& pair : mPlayers)
+			for (auto & pair : mPlayers)
 				pair.second->handleRealtimeInput(commands);
 		}
 
+		// Always handle the network input
 		CommandQueue& commands = mWorld.getCommandQueue();
-		for (auto& pair : mPlayers)
-			pair.second->handleRealtimeInput(commands);
+		for (auto & pair : mPlayers)
+			pair.second->handleRealtimeNetworkInput(commands);
 
+		// Handle messages from server that may have arrived
 		sf::Packet packet;
 		if (mSocket.receive(packet) == sf::Socket::Done)
 		{
@@ -170,8 +179,9 @@ bool MultiplayerGameState::update(sf::Time dt)
 			packet >> packetType;
 			handlePacket(packetType, packet);
 		}
-		else 
+		else
 		{
+			// Check for timeout with the server
 			if (mTimeSinceLastPacket > mClientTimeout)
 			{
 				mConnected = false;
@@ -185,37 +195,37 @@ bool MultiplayerGameState::update(sf::Time dt)
 
 		updateBroadcastMessage(dt);
 
+		// Time counter for blinking 2nd player text
 		mPlayerInvitationTime += dt;
 		if (mPlayerInvitationTime > sf::seconds(1.f))
 			mPlayerInvitationTime = sf::Time::Zero;
 
+		// Events occurring in the game
 		Action gameAction;
 		while (mWorld.pollGameAction(gameAction))
 		{
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>
-				(Client::PacketType::GameEvent);
-			packet << static_cast<sf::Int32>
-				(gameAction.type);
+			packet << static_cast<sf::Int32>(Client::PacketType::GameEvent);
+			packet << static_cast<sf::Int32>(gameAction.type);
 			packet << gameAction.position.x;
 			packet << gameAction.position.y;
 
 			mSocket.send(packet);
 		}
 
+		// Regular position updates
 		if (mTickClock.getElapsedTime() > sf::seconds(1.f / 20.f))
 		{
 			sf::Packet positionUpdatePacket;
-			positionUpdatePacket << static_cast<sf::Int32>
-				(Client::PacketType::PositionUpdate);
-			positionUpdatePacket << static_cast<sf::Int32>
-				(mLocalPlayerIdentifiers.size());
+			positionUpdatePacket << static_cast<sf::Int32>(Client::PacketType::PositionUpdate);
+			positionUpdatePacket << static_cast<sf::Int32>(mLocalPlayerIdentifiers.size());
 
 			for (sf::Int32 identifier : mLocalPlayerIdentifiers)
 			{
 				if (Aircraft* aircraft = mWorld.getAircraft(identifier))
 					positionUpdatePacket << identifier << aircraft->getPosition().x << aircraft->getPosition().y << static_cast<sf::Int32>(aircraft->getHitpoints()) << static_cast<sf::Int32>(aircraft->getMissileAmmo());
 			}
+
 			mSocket.send(positionUpdatePacket);
 			mTickClock.restart();
 		}
@@ -223,10 +233,11 @@ bool MultiplayerGameState::update(sf::Time dt)
 		mTimeSinceLastPacket += dt;
 	}
 
+	// Failed to connect and waited for more than 5 seconds: Back to menu
 	else if (mFailedConnectionClock.getElapsedTime() >= sf::seconds(5.f))
 	{
-	requestStackClear();
-	requestStackPush(StateID::Menu);
+		requestStackClear();
+		requestStackPush(StateID::Menu);
 	}
 
 	return true;
@@ -235,28 +246,32 @@ bool MultiplayerGameState::update(sf::Time dt)
 void MultiplayerGameState::disableAllRealtimeActions()
 {
 	mActiveState = false;
+
 	for (sf::Int32 identifier : mLocalPlayerIdentifiers)
 		mPlayers[identifier]->disableAllRealtimeActions();
 }
 
 bool MultiplayerGameState::handleEvent(const sf::Event& event)
 {
+	// Game input handling
 	CommandQueue& commands = mWorld.getCommandQueue();
 
-	for (auto& pair : mPlayers)
+	// Forward event to all players
+	for (auto & pair : mPlayers)
 		pair.second->handleEvent(event, commands);
 
 	if (event.type == sf::Event::KeyPressed)
 	{
+		// Enter pressed, add second player co-op (only if we are one player)
 		if (event.key.code == sf::Keyboard::Return && mLocalPlayerIdentifiers.size() == 1)
 		{
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>
-			 (Client::PacketType::RequestCoopPartner);
+			packet << static_cast<sf::Int32>(Client::PacketType::RequestCoopPartner);
 
 			mSocket.send(packet);
 		}
 
+		// Escape pressed, trigger the pause screen
 		else if (event.key.code == sf::Keyboard::Escape)
 		{
 			disableAllRealtimeActions();
@@ -267,10 +282,11 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 	{
 		mHasFocus = true;
 	}
-	else if (event.type == sf::Event::LostFocus) 
+	else if (event.type == sf::Event::LostFocus)
 	{
 		mHasFocus = false;
 	}
+
 	return true;
 }
 
@@ -279,11 +295,14 @@ void MultiplayerGameState::updateBroadcastMessage(sf::Time elapsedTime)
 	if (mBroadcasts.empty())
 		return;
 
+	// Update broadcast timer
 	mBroadcastElapsedTime += elapsedTime;
 	if (mBroadcastElapsedTime > sf::seconds(2.5f))
 	{
+		// If message has expired, remove it
 		mBroadcasts.erase(mBroadcasts.begin());
 
+		// Continue to display next broadcast message
 		if (!mBroadcasts.empty())
 		{
 			mBroadcastText.setString(mBroadcasts.front());
@@ -292,6 +311,7 @@ void MultiplayerGameState::updateBroadcastMessage(sf::Time elapsedTime)
 		}
 	}
 }
+
 void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet)
 {
 	switch (packetType)

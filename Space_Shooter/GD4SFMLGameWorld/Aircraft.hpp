@@ -69,7 +69,7 @@ private:
 	bool mPlayedExplosionSound;
 	bool mSpawnedPickup;
 	int mSpreadLevel;
-	
+
 	bool mPickupsEnabled;
 	bool mExplosionBegan;
 	int mIdentifier;

@@ -11,6 +11,7 @@
 
 class Player;
 class StateStack;
+class KeyBinding;
 
 namespace sf
 {
@@ -24,15 +25,15 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, Player& player, Player& player2, MusicPlayer& music, SoundPlayer& sounds);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, MusicPlayer& music, SoundPlayer& sounds, KeyBinding& keys1, KeyBinding& keys2);
 
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
-		Player* player;
-		Player* player2;
 		MusicPlayer* music;
 		SoundPlayer* sounds;
+		KeyBinding* keys1;
+		KeyBinding* keys2;
 	};
 
 public:
@@ -44,6 +45,9 @@ public:
 	virtual void draw() = 0;
 	virtual bool update(sf::Time dt) = 0;
 	virtual bool handleEvent(const sf::Event& event) = 0;
+
+	virtual void onActivate();
+	virtual void onDestroy();
 
 protected:
 	void requestStackPush(StateID stateID);

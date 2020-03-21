@@ -6,18 +6,19 @@
 #include "PauseState.hpp"
 #include "SettingsState.hpp"
 #include "GameOverState.hpp"
+#include "MultiplayerGameState.hpp"
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
-	: mWindow(sf::VideoMode(1024, 768), "Game Play", sf::Style::Close)
+	: mWindow(sf::VideoMode(1024, 768), "Network", sf::Style::Close)
 	, mTextures()
 	, mFonts()
-	, mPlayer(PlayerID::Player1)
-	, mPlayer2(PlayerID::Player2)
 	, mMusic()
 	, mSoundPlayer()
-	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer,mPlayer2, mMusic, mSoundPlayer))
+	, mKeyBinding1(1)
+	, mKeyBinding2(2)
+	, mStateStack(State::Context(mWindow, mTextures, mFonts, mMusic, mSoundPlayer, mKeyBinding1, mKeyBinding2))
 	, mStatisticText()
 	, mStatisticsUpdateTime()
 	, mStatisticsNumFrames(0)
@@ -109,7 +110,11 @@ void Application::registerStates()
 	mStateStack.registerState<TitleState>(StateID::Title);
 	mStateStack.registerState<MenuState>(StateID::Menu);
 	mStateStack.registerState<GameState>(StateID::Game);
+	mStateStack.registerState<MultiplayerGameState>(StateID::HostGame, true);
+	mStateStack.registerState<MultiplayerGameState>(StateID::JoinGame, false);
 	mStateStack.registerState<PauseState>(StateID::Pause);
+	mStateStack.registerState<PauseState>(StateID::NetworkPause, true);
 	mStateStack.registerState<SettingState>(StateID::Settings);
-	mStateStack.registerState<GameOverState>(StateID::GameOver);
+	mStateStack.registerState<GameOverState>(StateID::GameOver, "Mission Failed!");
+	mStateStack.registerState<GameOverState>(StateID::MissionSuccess, "Mission Successful!");
 }
