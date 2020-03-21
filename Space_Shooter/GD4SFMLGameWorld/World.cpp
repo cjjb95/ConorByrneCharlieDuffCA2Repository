@@ -290,7 +290,7 @@ void World::buildScene()
 
 	// Prepare the tiled background
 
-	sf::Texture& texture = mTextures.get(TextureID::Jungle);
+	sf::Texture& texture = mTextures.get(TextureID::Space);
 	sf::IntRect textureRect(mWorldBounds);
 	texture.setRepeated(true);
 
