@@ -362,8 +362,11 @@ void Aircraft::updateTexts()
 	mHealthDisplay->setPosition(0.f, 50.f);
 	mHealthDisplay->setRotation(-getRotation());
 
+	
 	if (mMissileDisplay)
 	{
+		mMissileDisplay->setPosition(15.f, 50.f);
+		mMissileDisplay->setRotation(-getRotation());
 		if (mMissileAmmo == 0)
 			mMissileDisplay->setString("");
 		else

@@ -50,6 +50,7 @@ void World::update(sf::Time dt)
 	for (Aircraft* player : mPlayerAircraft)
 	{
 		player->setVelocity(0.f, 0.f);
+		player->setRotation(90);
 	}
 
 	// Setup commands to destroy entities, and guide missiles
@@ -355,7 +356,7 @@ void World::adaptPlayerVelocity()
 			aircraft->setVelocity(velocity / std::sqrt(2.f));
 
 		// Add scrolling velocity
-		aircraft->accelerate(0.f, mScrollSpeed);
+		aircraft->accelerate(-mScrollSpeed, 0.f);
 	}
 }
 
