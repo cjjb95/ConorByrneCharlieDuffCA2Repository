@@ -126,7 +126,7 @@ void GameServer::executionThread()
 		// Fixed update step
 		while (stepTime >= stepInterval)
 		{
-			mBattleFieldRect.top += mBattleFieldScrollSpeed * stepInterval.asSeconds();
+			mBattleFieldRect.left += mBattleFieldScrollSpeed * stepInterval.asSeconds();
 			stepTime -= stepInterval;
 		}
 
