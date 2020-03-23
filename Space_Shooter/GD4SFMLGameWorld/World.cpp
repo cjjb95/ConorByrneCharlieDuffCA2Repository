@@ -465,7 +465,7 @@ void World::spawnEnemies()
 
 		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.type, mTextures, mFonts));
 		enemy->setPosition(spawn.x, spawn.y);
-		enemy->setRotation(180.f);
+		enemy->setRotation(270.f);
 
 		if (mNetworkedWorld)
 		{

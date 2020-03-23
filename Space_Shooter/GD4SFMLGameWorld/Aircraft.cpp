@@ -262,7 +262,7 @@ void Aircraft::updateMovementPattern(sf::Time dt)
 		}
 
 		// Compute velocity from direction
-		float radians = toRadian(directions[mDirectionIndex].angle + 90.f);
+		float radians = toRadian(directions[mDirectionIndex].angle + 180.f);
 		float vx = getMaxSpeed() * std::cos(radians);
 		float vy = getMaxSpeed() * std::sin(radians);
 
