@@ -8,7 +8,7 @@
 #include "PlayerID.hpp"
 #include "CategoryID.hpp"
 #include "ParticleID.hpp"
-
+#include "Wall.hpp"
 
 std::vector<PlayerData> initializePlayerData()
 {
@@ -130,6 +130,21 @@ std::vector<ParticleData> initializeParticleData()
 
 	data[static_cast<int>(ParticleID::Smoke)].color = sf::Color(50, 50, 50);
 	data[static_cast<int>(ParticleID::Smoke)].lifetime = sf::seconds(4.f);
+
+	return data;
+}
+
+
+std::vector<WallData> initializeWallData()
+{
+	std::vector<WallData> data(static_cast<int>(WallID::WallCount));
+	data[static_cast<int>(WallID::Wall)].texture = TextureID::Wall;
+	data[static_cast<int>(WallID ::Wall)].textureRect = sf::IntRect(0, 0, 480, 31);
+	data[static_cast<int>(WallID::Wall)].categoryID = CategoryID::Wall1;
+
+	data[static_cast<int>(WallID::Wall2)].texture = TextureID::Wall2;
+	data[static_cast<int>(WallID::Wall2)].textureRect = sf::IntRect(0, 0, 480, 31);
+	data[static_cast<int>(WallID::Wall2)].categoryID = CategoryID::Wall1;
 
 	return data;
 }

@@ -67,11 +67,18 @@ struct ParticleData
 	sf::Time lifetime;
 };
 
+struct WallData
+{
+	TextureID texture;
+	sf::IntRect textureRect;
+	CategoryID categoryID;
+};
+
 std::vector<PlayerData> initializePlayerData();
 std::vector<AircraftData> initializeAircraftData();
 std::vector<ProjectileData> initializeProjectileData();
 std::vector<PickupData> initializePickupData();
 std::vector<ParticleData> initializeParticleData();
-
+std::vector<WallData> initializeWallData();
 
 

@@ -25,6 +25,7 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, mEnemySpawnPoints()
 	, mActiveEnemies()
 	, mSpawnPositions()
+	,mWall()
 	,mNetworkedWorld(networked)
 	,mNetworkNode(nullptr)
 	,mFinishSprite(nullptr)
@@ -212,6 +213,8 @@ void World::loadTextures()
 	mTextures.load(TextureID::Particle, "Media/Textures/Particle.png");
 	mTextures.load(TextureID::FinishLine, "Media/Textures/FinishLine.png");
 	mTextures.load(TextureID::Space, "Media/Textures/space.png");
+	mTextures.load(TextureID::Wall, "Media/Textures/wall.png");
+	mTextures.load(TextureID::Wall2, "Media/Textures/wall2.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)
@@ -324,6 +327,45 @@ void World::buildScene()
 		mNetworkNode = networkNode.get();
 		mSceneGraph.attachChild(std::move(networkNode));
 	}
+
+	//add walls
+	std::unique_ptr<Wall> Wall1(new Wall(WallID::Wall, mTextures));
+	mWall[0] = Wall1.get();
+	mWall[0]->setPosition(600,10);
+	mWall[0]->scale(3,3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall1));
+
+	std::unique_ptr<Wall> Wall2(new Wall(WallID::Wall, mTextures));
+	mWall[1] = Wall2.get();
+	mWall[1]->setPosition(1200, 10);
+	mWall[1]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall2));
+
+	std::unique_ptr<Wall> Wall3(new Wall(WallID::Wall, mTextures));
+	mWall[2] = Wall3.get();
+	mWall[2]->setPosition(1800, 10);
+	mWall[2]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall3));
+
+
+	std::unique_ptr<Wall> Wall4(new Wall(WallID::Wall2, mTextures));
+	mWall[3] = Wall4.get();
+	mWall[3]->setPosition(600, 710);
+	mWall[3]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall4));
+
+	std::unique_ptr<Wall> Wall5(new Wall(WallID::Wall2, mTextures));
+	mWall[4] = Wall5.get();
+	mWall[4]->setPosition(1200, 710);
+	mWall[4]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall5));
+
+	std::unique_ptr<Wall> Wall6(new Wall(WallID::Wall2, mTextures));
+	mWall[5] = Wall6.get();
+	mWall[5]->setPosition(1800, 710);
+	mWall[5]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall6));
+
 
 	addEnemies();
 }

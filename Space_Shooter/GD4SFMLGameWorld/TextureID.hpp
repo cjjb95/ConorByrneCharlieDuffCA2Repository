@@ -8,5 +8,7 @@ enum class TextureID
 	Explosion,
 	Particle,
 	FinishLine,
-	Space
+	Space,
+	Wall,
+	Wall2
 };

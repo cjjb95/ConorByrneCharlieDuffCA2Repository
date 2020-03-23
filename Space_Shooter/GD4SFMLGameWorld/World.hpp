@@ -15,6 +15,9 @@
 #include "SoundPlayer.hpp"
 #include "NetworkProtocol.hpp"
 #include "GameActionID.hpp"
+#include "Wall.hpp"
+#include "WallID.hpp"
+
 
 #include "SFML/System/NonCopyable.hpp"
 #include "SFML/Graphics/View.hpp"
@@ -112,7 +115,7 @@ private:
 
 	std::vector<SpawnPoint>	mEnemySpawnPoints;
 	std::vector<Aircraft*> mActiveEnemies;
-
+	std::array<Wall*, 6>mWall;
 	BloomEffect	mBloomEffect;
 	bool mNetworkedWorld;
 	NetworkNode* mNetworkNode;
