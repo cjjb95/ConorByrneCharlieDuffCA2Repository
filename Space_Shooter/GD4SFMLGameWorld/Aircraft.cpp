@@ -317,7 +317,7 @@ void Aircraft::createBullets(SceneNode& node, const TextureHolder& textures) con
 	switch (mSpreadLevel)
 	{
 	case 1:
-		createProjectile(node, type, 0.0f, 0.5f, textures);
+		createProjectile(node, type, 0.5f, 0.0f, textures);
 		break;
 
 	case 2:
@@ -337,12 +337,14 @@ void Aircraft::createProjectile(SceneNode& node, ProjectileID type, float xOffse
 {
 	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 
-	sf::Vector2f offset(xOffset * mSprite.getGlobalBounds().width, yOffset * mSprite.getGlobalBounds().height);
-	sf::Vector2f velocity(0, projectile->getMaxSpeed());
+	sf::Vector2f offset(xOffset * mSprite.getGlobalBounds().height, yOffset * mSprite.getGlobalBounds().width);
+	sf::Vector2f velocity(projectile->getMaxSpeed(), 0 );
 
 	float sign = isAllied() ? -1.f : +1.f;
 	projectile->setPosition(getWorldPosition() + offset * sign);
-	projectile->setVelocity(velocity * sign);
+	projectile->setRotation(90);
+	projectile->setVelocity(-velocity * sign);
+
 	node.attachChild(std::move(projectile));
 }
 
