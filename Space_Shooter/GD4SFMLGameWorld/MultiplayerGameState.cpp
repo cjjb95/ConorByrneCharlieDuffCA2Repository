@@ -6,7 +6,7 @@
 #include <SFML/Network/IpAddress.hpp>
 
 #include <fstream>
-
+#include <iostream>
 
 sf::IpAddress getAddressFromFile()
 {
@@ -441,7 +441,9 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 											float height;
 											sf::Int32 type;
 											float relativeX;
-											packet >> type >> height >> relativeX;
+											packet >> type >> relativeX >> height;
+											std::cout << height << " " << relativeX << std::endl;
+
 
 											mWorld.addEnemy(static_cast<AircraftID>(type), relativeX, height);
 											mWorld.sortEnemies();

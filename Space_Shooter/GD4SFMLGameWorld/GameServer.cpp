@@ -176,10 +176,10 @@ void GameServer::tick()
 	if (now() >= mTimeForNextSpawn + mLastSpawnTime)
 	{
 		// No more enemies are spawned near the end
-		if (mBattleFieldRect.left > 600.f)
+		if (mBattleFieldRect.left < 1900.f)
 		{
-			std::size_t enemyCount = 1u + randomInt(2);
-			float spawnCenter = static_cast<float>(randomInt(500) - 250);
+			std::size_t enemyCount = 1;
+			float spawnCenter = static_cast<float>(400);
 
 			// In case only one enemy is being spawned, it appears directly at the spawnCenter
 			float planeDistance = 0.f;
@@ -197,8 +197,8 @@ void GameServer::tick()
 			{
 				sf::Packet packet;
 				packet << static_cast<sf::Int32>(Server::PacketType::SpawnEnemy);
-				packet << static_cast<sf::Int32>(1 + randomInt(static_cast<int>(AircraftID::TypeCount) - 1));
-				packet << mWorldHeight - mBattleFieldRect.left + 500;
+				packet << static_cast<sf::Int32>(AircraftID::Raptor);
+				packet << mWorldHeight - mBattleFieldRect.top;
 				packet << nextSpawnPosition;
 
 				nextSpawnPosition += planeDistance / 2.f;
