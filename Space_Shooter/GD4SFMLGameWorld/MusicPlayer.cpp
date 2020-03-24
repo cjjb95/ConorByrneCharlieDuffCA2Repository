@@ -3,7 +3,7 @@
 MusicPlayer::MusicPlayer()
 	: mMusic()
 	, mFilenames()
-	, mVolume(100.f)
+	, mVolume(0.f)
 {
 	mFilenames[MusicID::MenuTheme] = "Media/Music/MenuTheme.ogg";
 	mFilenames[MusicID::MissionTheme] = "Media/Music/MissionTheme.ogg";

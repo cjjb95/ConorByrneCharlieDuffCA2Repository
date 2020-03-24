@@ -3,6 +3,7 @@
 #include "Utility.hpp"
 #include "Pickup.hpp"
 #include "Aircraft.hpp"
+#include <iostream>
 
 #include <SFML/Network/Packet.hpp>
 
@@ -151,11 +152,12 @@ void GameServer::tick()
 	for (auto pair : mAircraftInfo)
 	{
 		// As long as one player has not crossed the finish line yet, set variable to false
-		if (pair.second.position.y > 0.f)
+		if (pair.second.position.x < 2000.f)
 			allAircraftsDone = false;
 	}
 	if (allAircraftsDone)
 	{
+		std::cout << "Success" << std::endl;
 		sf::Packet missionSuccessPacket;
 		missionSuccessPacket << static_cast<sf::Int32>(Server::PacketType::MissionSuccess);
 		sendToAll(missionSuccessPacket);
@@ -174,7 +176,7 @@ void GameServer::tick()
 	if (now() >= mTimeForNextSpawn + mLastSpawnTime)
 	{
 		// No more enemies are spawned near the end
-		if (mBattleFieldRect.top > 600.f)
+		if (mBattleFieldRect.left > 600.f)
 		{
 			std::size_t enemyCount = 1u + randomInt(2);
 			float spawnCenter = static_cast<float>(randomInt(500) - 250);
