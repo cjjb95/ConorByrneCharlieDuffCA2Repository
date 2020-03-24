@@ -138,13 +138,30 @@ std::vector<ParticleData> initializeParticleData()
 std::vector<WallData> initializeWallData()
 {
 	std::vector<WallData> data(static_cast<int>(WallID::WallCount));
+	//horizontal top
 	data[static_cast<int>(WallID::Wall)].texture = TextureID::Wall;
 	data[static_cast<int>(WallID ::Wall)].textureRect = sf::IntRect(0, 0, 480, 31);
 	data[static_cast<int>(WallID::Wall)].categoryID = CategoryID::Wall1;
-
+	//horrizontal bottom
 	data[static_cast<int>(WallID::Wall2)].texture = TextureID::Wall2;
 	data[static_cast<int>(WallID::Wall2)].textureRect = sf::IntRect(0, 0, 480, 31);
 	data[static_cast<int>(WallID::Wall2)].categoryID = CategoryID::Wall1;
+	//vertical top
+	data[static_cast<int>(WallID::Wall3)].texture = TextureID::Wall3;
+	data[static_cast<int>(WallID::Wall3)].textureRect = sf::IntRect(0, 0, 32, 206);
+	data[static_cast<int>(WallID::Wall3)].categoryID = CategoryID::Wall1;
+	//vertical bottom
+	data[static_cast<int>(WallID::Wall4)].texture = TextureID::Wall4;
+	data[static_cast<int>(WallID::Wall4)].textureRect = sf::IntRect(0, 0, 32, 206);
+	data[static_cast<int>(WallID::Wall4)].categoryID = CategoryID::Wall1;
+	//vertical long top
+	data[static_cast<int>(WallID::Wall5)].texture = TextureID::Wall5;
+	data[static_cast<int>(WallID::Wall5)].textureRect = sf::IntRect(0, 0, 160, 206);
+	data[static_cast<int>(WallID::Wall5)].categoryID = CategoryID::Wall1;
+	//vertical long bottom
+	data[static_cast<int>(WallID::Wall6)].texture = TextureID::Wall6;
+	data[static_cast<int>(WallID::Wall6)].textureRect = sf::IntRect(0, 0, 160, 206);
+	data[static_cast<int>(WallID::Wall6)].categoryID = CategoryID::Wall1;
 
 	return data;
 }

@@ -115,7 +115,7 @@ private:
 
 	std::vector<SpawnPoint>	mEnemySpawnPoints;
 	std::vector<Aircraft*> mActiveEnemies;
-	std::array<Wall*, 6>mWall;
+	std::array<Wall*, 10>mWall;
 	BloomEffect	mBloomEffect;
 	bool mNetworkedWorld;
 	NetworkNode* mNetworkNode;

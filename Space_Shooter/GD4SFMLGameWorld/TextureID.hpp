@@ -10,5 +10,9 @@ enum class TextureID
 	FinishLine,
 	Space,
 	Wall,
-	Wall2
+	Wall2,
+	Wall3,
+	Wall4,
+	Wall5,
+	Wall6,
 };

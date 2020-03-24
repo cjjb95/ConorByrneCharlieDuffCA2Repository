@@ -198,7 +198,7 @@ void GameServer::tick()
 				sf::Packet packet;
 				packet << static_cast<sf::Int32>(Server::PacketType::SpawnEnemy);
 				packet << static_cast<sf::Int32>(1 + randomInt(static_cast<int>(AircraftID::TypeCount) - 1));
-				packet << mWorldHeight - mBattleFieldRect.top + 500;
+				packet << mWorldHeight - mBattleFieldRect.left + 500;
 				packet << nextSpawnPosition;
 
 				nextSpawnPosition += planeDistance / 2.f;

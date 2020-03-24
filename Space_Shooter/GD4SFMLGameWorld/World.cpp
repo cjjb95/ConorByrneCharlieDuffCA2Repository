@@ -215,6 +215,10 @@ void World::loadTextures()
 	mTextures.load(TextureID::Space, "Media/Textures/space.png");
 	mTextures.load(TextureID::Wall, "Media/Textures/wall.png");
 	mTextures.load(TextureID::Wall2, "Media/Textures/wall2.png");
+	mTextures.load(TextureID::Wall3, "Media/Textures/wall_barricade.png");
+	mTextures.load(TextureID::Wall4, "Media/Textures/wall_barricade2.png");
+	mTextures.load(TextureID::Wall5, "Media/Textures/wall_barricade3.png");
+	mTextures.load(TextureID::Wall6, "Media/Textures/wall_barricade4.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)
@@ -276,6 +280,22 @@ void World::handleCollisions()
 			aircraft.damage(projectile.getDamage());
 			projectile.destroy();
 		}
+
+		else if (matchesCategories(pair, CategoryID::PlayerAircraft, CategoryID::Wall1))
+		{
+			auto& aircraft = static_cast<Aircraft&>(*pair.first);
+			auto& projectile = static_cast<Projectile&>(*pair.second);
+
+			// Apply projectile damage to aircraft, destroy projectile
+			aircraft.damage(200);
+		}
+
+		else if (matchesCategories(pair, CategoryID::AlliedProjectile, CategoryID::Wall1))
+		{
+			auto& projectile = static_cast<Aircraft&>(*pair.first);
+			// destroy projectile if it hits a wall
+			projectile.destroy();
+		}
 	}
 }
 
@@ -330,10 +350,36 @@ void World::buildScene()
 	}
 
 	//add walls
+	
+
+
+	//obsticle walls
+	std::unique_ptr<Wall> Wall7(new Wall(WallID::Wall3, mTextures));
+	mWall[6] = Wall7.get();
+	mWall[6]->setPosition(1000, 565);
+	mWall[6]->scale(1, 1);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall7));
+
+	std::unique_ptr<Wall> Wall8(new Wall(WallID::Wall6, mTextures));
+	mWall[7] = Wall8.get();
+	mWall[7]->setPosition(700, 100);
+	mWall[7]->scale(1, 1);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall8));
+
+	std::unique_ptr<Wall> Wall9(new Wall(WallID::Wall5, mTextures));
+	mWall[8] = Wall9.get();
+	mWall[8]->setPosition(1500, 565);
+	mWall[8]->scale(1, 1);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall9));
+
+
+
+
+	//Border walls
 	std::unique_ptr<Wall> Wall1(new Wall(WallID::Wall, mTextures));
 	mWall[0] = Wall1.get();
-	mWall[0]->setPosition(600,10);
-	mWall[0]->scale(3,3);
+	mWall[0]->setPosition(600, 10);
+	mWall[0]->scale(3, 3);
 	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall1));
 
 	std::unique_ptr<Wall> Wall2(new Wall(WallID::Wall, mTextures));

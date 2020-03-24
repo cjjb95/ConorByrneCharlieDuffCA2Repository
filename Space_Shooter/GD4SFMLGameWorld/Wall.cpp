@@ -37,7 +37,7 @@ void Wall::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 
 unsigned int Wall::getCategory() const
 {
-	if (mType == WallID::Wall)
+	if (mType == WallID::Wall || mType == WallID::Wall2 || mType == WallID::Wall3 || mType == WallID::Wall4 || mType == WallID::Wall5 || mType == WallID::Wall6)
 		return static_cast<int>(CategoryID::Wall1);
 	else
 		return static_cast<int>(CategoryID::Wall2);
