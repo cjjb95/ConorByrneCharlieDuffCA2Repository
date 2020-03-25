@@ -41,7 +41,7 @@ std::vector<AircraftData> initializeAircraftData()
 	data[static_cast<int>(AircraftID::Eagle)].fireInterval = sf::seconds(1);
 	data[static_cast<int>(AircraftID::Eagle)].textureRect = sf::IntRect(0, 0, 75, 88);
 	data[static_cast<int>(AircraftID::Eagle)].texture = TextureID::Robot;
-	data[static_cast<int>(AircraftID::Eagle)].hasRollAnimation = false;
+	data[static_cast<int>(AircraftID::Eagle)].hasRollAnimation = true;
 
 	data[static_cast<int>(AircraftID::Eagle2)].hitpoints = 100;
 	data[static_cast<int>(AircraftID::Eagle2)].speed = 200.f;
@@ -81,7 +81,7 @@ std::vector<ProjectileData> initializeProjectileData()
 	std::vector<ProjectileData> data(static_cast<int>(ProjectileID::TypeCount));
 
 	data[static_cast<int>(ProjectileID::AlliedBullet)].damage = 10;
-	data[static_cast<int>(ProjectileID::AlliedBullet)].speed = 300.f;
+	data[static_cast<int>(ProjectileID::AlliedBullet)].speed = 400.f;
 	data[static_cast<int>(ProjectileID::AlliedBullet)].texture = TextureID::Entities;
 	data[static_cast<int>(ProjectileID::AlliedBullet)].textureRect = sf::IntRect(175, 64, 3, 14);
 

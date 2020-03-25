@@ -220,7 +220,7 @@ void World::loadTextures()
 	mTextures.load(TextureID::Wall4, "Media/Textures/wall_barricade2.png");
 	mTextures.load(TextureID::Wall5, "Media/Textures/wall_barricade3.png");
 	mTextures.load(TextureID::Wall6, "Media/Textures/wall_barricade4.png");
-	mTextures.load(TextureID::Robot, "Media/Textures/Robot1.png");
+	mTextures.load(TextureID::Robot, "Media/Textures/Robot_sheet.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)

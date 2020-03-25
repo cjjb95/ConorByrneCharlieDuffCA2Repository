@@ -383,12 +383,27 @@ void Aircraft::updateRollAnimation()
 		sf::IntRect textureRect = Table[static_cast<int>(mType)].textureRect;
 
 		// Roll left: Texture rect offset once
-		if (getVelocity().x < 0.f)
+		if (getVelocity().y < 0.f)
+		{
 			textureRect.left += textureRect.width;
 
+		}
 		// Roll right: Texture rect offset twice
-		else if (getVelocity().x > 0.f)
+		else if (getVelocity().y > 0.f)
+		{
+			textureRect.left += textureRect.width;
+
+		}
+		else if (getVelocity().x < 0.f)
+		{
 			textureRect.left += 2 * textureRect.width;
+
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			textureRect.left += 3 * textureRect.width;
+
+		}
 
 		mSprite.setTextureRect(textureRect);
 	}
