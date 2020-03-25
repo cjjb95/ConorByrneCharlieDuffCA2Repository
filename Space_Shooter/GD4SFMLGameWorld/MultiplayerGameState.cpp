@@ -442,7 +442,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 											sf::Int32 type;
 											float relativeX;
 											packet >> type >> relativeX >> height;
-											std::cout << height << " " << relativeX << std::endl;
+											std::cout << "width: " <<  relativeX <<  " height: " << height<< std::endl;
 
 
 											mWorld.addEnemy(static_cast<AircraftID>(type), relativeX, height);

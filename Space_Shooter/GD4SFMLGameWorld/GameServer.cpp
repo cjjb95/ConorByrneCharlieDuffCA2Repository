@@ -146,18 +146,20 @@ void GameServer::executionThread()
 void GameServer::tick()
 {
 	updateClientState();
+	float planeLocation = 0.f;
 
-	// Check for mission success = all planes with position.y < offset
-	bool allAircraftsDone = true;
+	bool allAircraftsDone = true;      // Check for mission success = all planes with position.y < offset
 	for (auto pair : mAircraftInfo)
 	{
 		// As long as one player has not crossed the finish line yet, set variable to false
 		if (pair.second.position.x < 5000.f)
 			allAircraftsDone = false;
 	}
+
+	//std::cout << planeLocation << std::endl;
 	if (allAircraftsDone)
 	{
-		std::cout << "Success" << std::endl;
+		//std::cout << "Success" << std::endl;
 		sf::Packet missionSuccessPacket;
 		missionSuccessPacket << static_cast<sf::Int32>(Server::PacketType::MissionSuccess);
 		sendToAll(missionSuccessPacket);
@@ -178,27 +180,29 @@ void GameServer::tick()
 		// No more enemies are spawned near the end
 		if (mBattleFieldRect.left < 1900.f)
 		{
-			std::size_t enemyCount = 1;
-			float spawnCenter = static_cast<float>(400);
+			std::size_t enemyCount = 2;
+			float spawnCenter = static_cast<float>(300 + randomInt(400));
 
 			// In case only one enemy is being spawned, it appears directly at the spawnCenter
 			float planeDistance = 0.f;
 			float nextSpawnPosition = spawnCenter;
+			float xAxisSpawn = mAircraftInfo[1].position.x;
 
 			// In case there are two enemies being spawned together, each is spawned at each side of the spawnCenter, with a minimum distance
-			if (enemyCount == 2)
+			if (enemyCount > 1)
 			{
-				planeDistance = static_cast<float>(150 + randomInt(250));
-				nextSpawnPosition = spawnCenter - planeDistance / 2.f;
+				planeDistance = static_cast<float>(250);
+				nextSpawnPosition = spawnCenter - planeDistance;
 			}
 
 			// Send the spawn orders to all clients
 			for (std::size_t i = 0; i < enemyCount; ++i)
 			{
+				xAxisSpawn += 50 + randomInt(50);
 				sf::Packet packet;
 				packet << static_cast<sf::Int32>(Server::PacketType::SpawnEnemy);
 				packet << static_cast<sf::Int32>(AircraftID::Raptor);
-				packet << mWorldHeight - mBattleFieldRect.top;
+				packet << xAxisSpawn;
 				packet << nextSpawnPosition;
 
 				nextSpawnPosition += planeDistance / 2.f;
