@@ -19,7 +19,7 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, mSceneLayers()
 	, mWorldBounds(0.f, 0.f, 5000.f, mCamera.getSize().y)
 	, mSpawnPosition(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f)
-	, mScrollSpeed(-75.f)
+	, mScrollSpeed(-100.f)
 	,mScrollSpeedCompensation(1.f)
 	, mPlayerAircraft()
 	, mEnemySpawnPoints()
@@ -52,7 +52,7 @@ void World::update(sf::Time dt)
 	for (Aircraft* player : mPlayerAircraft)
 	{
 		player->setVelocity(0.f, 0.f);
-		player->setRotation(90);
+		//player->setRotation(90);
 	}
 
 	// Setup commands to destroy entities, and guide missiles
@@ -220,6 +220,7 @@ void World::loadTextures()
 	mTextures.load(TextureID::Wall4, "Media/Textures/wall_barricade2.png");
 	mTextures.load(TextureID::Wall5, "Media/Textures/wall_barricade3.png");
 	mTextures.load(TextureID::Wall6, "Media/Textures/wall_barricade4.png");
+	mTextures.load(TextureID::Robot, "Media/Textures/Robot1.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)

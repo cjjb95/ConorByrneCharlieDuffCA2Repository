@@ -317,18 +317,18 @@ void Aircraft::createBullets(SceneNode& node, const TextureHolder& textures) con
 	switch (mSpreadLevel)
 	{
 	case 1:
-		createProjectile(node, type, 0.5f, 0.0f, textures);
+		createProjectile(node, type, -0.5f, 0.0f, textures);
 		break;
 
 	case 2:
-		createProjectile(node, type, -0.33f, 0.33f, textures);
-		createProjectile(node, type, +0.33f, 0.33f, textures);
+		createProjectile(node, type, -0.5f, 0.0f, textures);
+		createProjectile(node, type, -0.5f, -0.5f, textures);
 		break;
 
 	case 3:
-		createProjectile(node, type, -0.5f, 0.33f, textures);
-		createProjectile(node, type, 0.0f, 0.5f, textures);
-		createProjectile(node, type, +0.5f, 0.33f, textures);
+		createProjectile(node, type, -0.5f, -0.5f, textures);
+		createProjectile(node, type, -0.5f, 0.0f, textures);
+		createProjectile(node, type, -0.5f, 0.5f, textures);
 		break;
 	}
 }
@@ -361,13 +361,13 @@ void Aircraft::createPickup(SceneNode& node, const TextureHolder& textures) cons
 void Aircraft::updateTexts()
 {
 	mHealthDisplay->setString(toString(getHitpoints()) + " HP");
-	mHealthDisplay->setPosition(0.f, 50.f);
+	mHealthDisplay->setPosition(-70.f, 0.f);
 	mHealthDisplay->setRotation(-getRotation());
 
 	
 	if (mMissileDisplay)
 	{
-		mMissileDisplay->setPosition(15.f, 50.f);
+		mMissileDisplay->setPosition(-70.f, 20.f);
 		mMissileDisplay->setRotation(-getRotation());
 		if (mMissileAmmo == 0)
 			mMissileDisplay->setString("");
