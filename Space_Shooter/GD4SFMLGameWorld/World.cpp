@@ -327,7 +327,7 @@ void World::buildScene()
 	//Add the finish line to the scene
 	sf::Texture& finishTexture = mTextures.get(TextureID::FinishLine);
 	std::unique_ptr<SpriteNode> finishSprite(new SpriteNode(finishTexture));
-	finishSprite->setPosition(2000.f, -100.f);
+	finishSprite->setPosition(5000.f, -100.f);
 	finishSprite->setRotation(90);
 	mSceneLayers[static_cast<int>(LayerID::Background)]->attachChild(std::move(finishSprite));
 
