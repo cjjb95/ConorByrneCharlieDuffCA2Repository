@@ -221,6 +221,7 @@ void World::loadTextures()
 	mTextures.load(TextureID::Wall5, "Media/Textures/wall_barricade3.png");
 	mTextures.load(TextureID::Wall6, "Media/Textures/wall_barricade4.png");
 	mTextures.load(TextureID::Robot, "Media/Textures/Robot_sheet.png");
+	mTextures.load(TextureID::Enemy1, "Media/Textures/EnemyShip.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)
@@ -613,7 +614,7 @@ void World::spawnEnemies()
 
 		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.type, mTextures, mFonts));
 		enemy->setPosition(spawn.x, spawn.y);
-		enemy->setRotation(270.f);
+		
 
 		if (mNetworkedWorld)
 		{

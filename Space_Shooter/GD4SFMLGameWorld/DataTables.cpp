@@ -53,8 +53,8 @@ std::vector<AircraftData> initializeAircraftData()
 	data[static_cast<int>(AircraftID::Raptor)].hitpoints = 20;
 	data[static_cast<int>(AircraftID::Raptor)].speed = 80.f;
 	data[static_cast<int>(AircraftID::Raptor)].fireInterval = sf::Time::Zero;
-	data[static_cast<int>(AircraftID::Raptor)].texture = TextureID::Entities;
-	data[static_cast<int>(AircraftID::Raptor)].textureRect = sf::IntRect(144, 0, 84, 64);
+	data[static_cast<int>(AircraftID::Raptor)].texture = TextureID::Enemy1;
+	data[static_cast<int>(AircraftID::Raptor)].textureRect = sf::IntRect(0, 0, 123, 66);
 
 	data[static_cast<int>(AircraftID::Raptor)].directions.push_back(Direction(+45.f, 80.f));
 	data[static_cast<int>(AircraftID::Raptor)].directions.push_back(Direction(-45.f, 160.f));
