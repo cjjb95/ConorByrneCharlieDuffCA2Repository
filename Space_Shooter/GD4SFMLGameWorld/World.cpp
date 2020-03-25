@@ -350,9 +350,9 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(networkNode));
 	}
 
-	//add walls
-	
+	//Àdd walls - Both Obsticle and Border Walls
 
+	#pragma region ObsticleWalls
 
 	//obsticle walls
 	std::unique_ptr<Wall> Wall7(new Wall(WallID::Wall3, mTextures));
@@ -375,11 +375,43 @@ void World::buildScene()
 
 	std::unique_ptr<Wall> Wall10(new Wall(WallID::Wall4, mTextures));
 	mWall[9] = Wall10.get();
-	mWall[9]->setPosition(2500, 100);
-	mWall[9]->scale(1, 1);
+	mWall[9]->setPosition(3500, 100);
+	mWall[9]->scale(3, 3);
 	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall10));
 
+	std::unique_ptr<Wall> Wall21(new Wall(WallID::Wall6, mTextures));
+	mWall[20] = Wall21.get();
+	mWall[20]->setPosition(2200, 100);
+	mWall[20]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall21));
 
+	std::unique_ptr<Wall> Wall22(new Wall(WallID::Wall4, mTextures));
+	mWall[21] = Wall22.get();
+	mWall[21]->setPosition(3000, 100);
+	mWall[21]->scale(1, 1);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall22));
+
+	std::unique_ptr<Wall> Wall23(new Wall(WallID::Wall3, mTextures));
+	mWall[22] = Wall23.get();
+	mWall[22]->setPosition(3000, 565);
+	mWall[22]->scale(1, 1);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall23));
+
+	std::unique_ptr<Wall> Wall24(new Wall(WallID::Wall3, mTextures));
+	mWall[23] = Wall24.get();
+	mWall[23]->setPosition(4000, 565);
+	mWall[23]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall24));
+
+	std::unique_ptr<Wall> Wall25(new Wall(WallID::Wall4, mTextures));
+	mWall[24] = Wall25.get();
+	mWall[24]->setPosition(4350, 100);
+	mWall[24]->scale(3, 3);
+	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall25));
+
+#pragma endregion
+
+	#pragma region BorderWalls
 	//Border walls
 	//top
 	std::unique_ptr<Wall> Wall1(new Wall(WallID::Wall, mTextures));
@@ -479,6 +511,9 @@ void World::buildScene()
 	mWall[19]->setPosition(4800, 710);
 	mWall[19]->scale(3, 3);
 	mSceneLayers[static_cast<int>(LayerID::UpperAir)]->attachChild(std::move(Wall20));
+#pragma endregion
+
+	//Add Enemies
 	addEnemies();
 }
 
