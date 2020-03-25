@@ -152,7 +152,7 @@ void GameServer::tick()
 	for (auto pair : mAircraftInfo)
 	{
 		// As long as one player has not crossed the finish line yet, set variable to false
-		if (pair.second.position.x < 2000.f)
+		if (pair.second.position.x < 5000.f)
 			allAircraftsDone = false;
 	}
 	if (allAircraftsDone)
