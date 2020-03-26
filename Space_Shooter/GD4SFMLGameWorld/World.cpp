@@ -222,6 +222,7 @@ void World::loadTextures()
 	mTextures.load(TextureID::Wall6, "Media/Textures/wall_barricade4.png");
 	mTextures.load(TextureID::Robot, "Media/Textures/Robot_sheet.png");
 	mTextures.load(TextureID::Enemy1, "Media/Textures/EnemyShip.png");
+	mTextures.load(TextureID::Enemy2, "Media/Textures/EnemyShip2.png");
 }
 
 bool matchesCategories(SceneNode::Pair& colliders, CategoryID type1, CategoryID type2)
@@ -559,7 +560,7 @@ void World::addEnemies()
 	}
 
 	// Add enemies to the spawn point container
-	addEnemy(AircraftID::Raptor, 500.f, 0.f);
+	addEnemy(AircraftID::Avenger, 500.f, 0.f);
 	addEnemy(AircraftID::Raptor, 1000.f, 500.f);
 	addEnemy(AircraftID::Raptor, 1150.f, +100.f);
 	addEnemy(AircraftID::Raptor, -100.f, 1150.f);

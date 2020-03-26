@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include <SFML/Network/Packet.hpp>
+#include <SFML/System.hpp>
 
 GameServer::RemotePeer::RemotePeer()
 	: ready(false)
@@ -198,10 +199,20 @@ void GameServer::tick()
 			// Send the spawn orders to all clients
 			for (std::size_t i = 0; i < enemyCount; ++i)
 			{
+				
+				
 				xAxisSpawn += 50 + randomInt(50);
 				sf::Packet packet;
 				packet << static_cast<sf::Int32>(Server::PacketType::SpawnEnemy);
-				packet << static_cast<sf::Int32>(AircraftID::Raptor);
+				if (i < 1) 
+				{
+					packet << static_cast<sf::Int32>(AircraftID::Avenger);
+				}
+				else
+				{
+					packet << static_cast<sf::Int32>(AircraftID::Raptor);
+					
+				}
 				packet << xAxisSpawn;
 				packet << nextSpawnPosition;
 

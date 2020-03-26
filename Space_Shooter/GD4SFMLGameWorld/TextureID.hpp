@@ -17,4 +17,5 @@ enum class TextureID
 	Wall6,
 	Robot,
 	Enemy1,
+	Enemy2,
 };
