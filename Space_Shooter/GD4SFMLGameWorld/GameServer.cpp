@@ -149,12 +149,15 @@ void GameServer::tick()
 	updateClientState();
 	float planeLocation = 0.f;
 
-	bool allAircraftsDone = true;      // Check for mission success = all planes with position.y < offset
+	bool allAircraftsDone = false;      // Check for mission success = all planes with position.y < offset
 	for (auto pair : mAircraftInfo)
 	{
 		// As long as one player has not crossed the finish line yet, set variable to false
-		if (pair.second.position.x < 5000.f)
+		if (pair.second.position.x > 5000.f)
+			allAircraftsDone = true;
+		else {
 			allAircraftsDone = false;
+		}
 	}
 
 	//std::cout << planeLocation << std::endl;

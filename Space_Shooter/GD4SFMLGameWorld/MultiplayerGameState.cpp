@@ -19,7 +19,7 @@ sf::IpAddress getAddressFromFile()
 
 	// If open/read failed, create new file
 	std::ofstream outputFile("ip.txt");
-	std::string localAddress = "127.0.0.1";
+	std::string localAddress = "192.168.1.7";
 	outputFile << localAddress;
 	return localAddress;
 }
