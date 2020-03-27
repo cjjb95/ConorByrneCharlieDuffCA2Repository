@@ -59,6 +59,7 @@ Aircraft::Aircraft(AircraftID type, const TextureHolder& textures, const FontHol
 	, mHealthDisplay(nullptr)
 	, mMissileDisplay(nullptr)
 	, mIdentifier(0)
+	, mScore(0)
 {
 	mExplosion.setFrameSize(sf::Vector2i(256, 256));
 	mExplosion.setNumFrames(16);
@@ -110,7 +111,14 @@ void Aircraft::setMissileAmmo(int ammo)
 	mMissileAmmo = ammo;
 }
 
+void Aircraft::setScore(int score)
+{
+	mScore = score;
+}
 
+int Aircraft::getScore() {
+	return mScore;
+}
 void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	if (isDestroyed() && mShowExplosion)
@@ -235,6 +243,10 @@ void Aircraft::launchMissile()
 		mIsLaunchingMissile = true;
 		--mMissileAmmo;
 	}
+}
+
+void Aircraft::increaseScore() {
+	mScore += 10;
 }
 
 int	Aircraft::getIdentifier() const

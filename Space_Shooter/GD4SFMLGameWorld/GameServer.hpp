@@ -44,6 +44,7 @@ private:
 		sf::Int32					hitpoints;
 		sf::Int32                   missileAmmo;
 		std::map<sf::Int32, bool>	realtimeActions;
+		sf::Int32					score;
 	};
 
 	// Unique pointer to remote peers

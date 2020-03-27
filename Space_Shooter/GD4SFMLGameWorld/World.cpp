@@ -271,6 +271,8 @@ void World::handleCollisions()
 			// Apply pickup effect to player, destroy projectile
 			pickup.apply(player);
 			player.playerLocalSound(mCommandQueue, SoundEffectID::CollectPickup);
+			player.increaseScore();
+			std::cout << player.getScore() << std::endl;
 			pickup.destroy();
 		}
 

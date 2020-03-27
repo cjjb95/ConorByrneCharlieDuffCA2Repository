@@ -152,9 +152,12 @@ void GameServer::tick()
 	bool allAircraftsDone = false;      // Check for mission success = all planes with position.y < offset
 	for (auto pair : mAircraftInfo)
 	{
+
+		//std::cout << pair.second.score << std::endl;
 		// As long as one player has not crossed the finish line yet, set variable to false
-		if (pair.second.position.x > 5000.f)
+		if (pair.second.position.x > 5000.f) {
 			allAircraftsDone = true;
+		}
 		else {
 			allAircraftsDone = false;
 		}
@@ -304,6 +307,7 @@ void GameServer::handleIncomingPacket(sf::Packet& packet, RemotePeer& receivingP
 						mAircraftInfo[mAircraftIdentifierCounter].position = sf::Vector2f(mBattleFieldRect.width / 2, mBattleFieldRect.top + mBattleFieldRect.height / 2);
 						mAircraftInfo[mAircraftIdentifierCounter].hitpoints = 100;
 						mAircraftInfo[mAircraftIdentifierCounter].missileAmmo = 2;
+						mAircraftInfo[mAircraftIdentifierCounter].score = 0;
 
 						sf::Packet requestPacket;
 						requestPacket << static_cast<sf::Int32>(Server::PacketType::AcceptCoopPartner);
@@ -341,10 +345,12 @@ void GameServer::handleIncomingPacket(sf::Packet& packet, RemotePeer& receivingP
 								sf::Int32 aircraftHitpoints;
 								sf::Int32 missileAmmo;
 								sf::Vector2f aircraftPosition;
-								packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y >> aircraftHitpoints >> missileAmmo;
+								sf::Int32 score;
+								packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y >> aircraftHitpoints >> missileAmmo >> score;
 								mAircraftInfo[aircraftIdentifier].position = aircraftPosition;
 								mAircraftInfo[aircraftIdentifier].hitpoints = aircraftHitpoints;
 								mAircraftInfo[aircraftIdentifier].missileAmmo = missileAmmo;
+								mAircraftInfo[aircraftIdentifier].score = score;
 							}
 						} break;
 
@@ -398,6 +404,7 @@ void GameServer::handleIncomingConnections()
 		mAircraftInfo[mAircraftIdentifierCounter].position = sf::Vector2f(mBattleFieldRect.width / 2, mBattleFieldRect.top + mBattleFieldRect.height / 2);
 		mAircraftInfo[mAircraftIdentifierCounter].hitpoints = 100;
 		mAircraftInfo[mAircraftIdentifierCounter].missileAmmo = 2;
+		mAircraftInfo[mAircraftIdentifierCounter].score = 0;
 
 		sf::Packet packet;
 		packet << static_cast<sf::Int32>(Server::PacketType::SpawnSelf);
@@ -472,7 +479,7 @@ void GameServer::informWorldState(sf::TcpSocket& socket)
 		if (mPeers[i]->ready)
 		{
 			for (sf::Int32 identifier : mPeers[i]->aircraftIdentifiers)
-				packet << identifier << mAircraftInfo[identifier].position.x << mAircraftInfo[identifier].position.y << mAircraftInfo[identifier].hitpoints << mAircraftInfo[identifier].missileAmmo;
+				packet << identifier << mAircraftInfo[identifier].position.x << mAircraftInfo[identifier].position.y << mAircraftInfo[identifier].hitpoints << mAircraftInfo[identifier].missileAmmo << mAircraftInfo[identifier].score;
 		}
 	}
 

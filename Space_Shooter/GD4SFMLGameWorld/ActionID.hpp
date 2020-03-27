@@ -7,5 +7,6 @@ enum class ActionID
 	MoveDown,
 	Fire,
 	LaunchMissile,
-	ActionCount
+	ActionCount,
+	UpdateScore
 };

@@ -23,6 +23,8 @@ public:
 	int getMissileAmmo() const;
 	void setMissileAmmo(int ammo);
 
+	void setScore(int score);
+
 	float getMaxSpeed() const;
 	void fire();
 	void launchMissile();
@@ -31,6 +33,8 @@ public:
 	void increaseSpread();
 	void collectMissiles(unsigned int count);
 
+	int getScore();
+	void increaseScore();
 	void playerLocalSound(CommandQueue& command, SoundEffectID effect);
 
 private:
@@ -77,4 +81,5 @@ private:
 	int mMissileAmmo;
 	float mTravelledDistance;
 	std::size_t mDirectionIndex;
+	int mScore;
 };
