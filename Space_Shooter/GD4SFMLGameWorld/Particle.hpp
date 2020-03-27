@@ -1,3 +1,9 @@
+/*
+Conor Byrne
+D00185566
+Charlie Duff
+D00183790
+*/
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Time.hpp>

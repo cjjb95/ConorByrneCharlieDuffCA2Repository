@@ -1,3 +1,9 @@
+/*
+Conor Byrne
+D00185566
+Charlie Duff
+D00183790
+*/
 #include "TextNode.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>

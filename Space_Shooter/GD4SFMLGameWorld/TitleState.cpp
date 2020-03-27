@@ -1,3 +1,9 @@
+/*
+Conor Byrne
+D00185566
+Charlie Duff
+D00183790
+*/
 #include "TitleState.hpp"
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"

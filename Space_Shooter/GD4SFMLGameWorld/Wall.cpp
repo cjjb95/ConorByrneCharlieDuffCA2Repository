@@ -1,7 +1,8 @@
 /*
+Conor Byrne
+D00185566
 Charlie Duff
 D00183790
-added full file
 */
 #include "Wall.hpp"
 #include "ResourceHolder.hpp"
