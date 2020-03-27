@@ -1,5 +1,9 @@
+/*
+Charlie Duff
+D00183790
+*/
 #pragma once
-
+//CD - Added from screen cast, no packetTypes added as no extra were needed
 #include <SFML/Config.hpp>
 #include <SFML/System/Vector2.hpp>
 

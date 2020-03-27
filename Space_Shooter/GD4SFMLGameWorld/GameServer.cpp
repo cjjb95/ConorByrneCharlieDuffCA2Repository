@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "GameServer.hpp"
 #include "NetworkProtocol.hpp"
 #include "Utility.hpp"
@@ -7,7 +11,7 @@
 
 #include <SFML/Network/Packet.hpp>
 #include <SFML/System.hpp>
-
+//CD - Added by me following instructions from screencast, values were edited to work with our game
 GameServer::RemotePeer::RemotePeer()
 	: ready(false)
 	, timedOut(false)
@@ -207,7 +211,7 @@ void GameServer::tick()
 			for (std::size_t i = 0; i < enemyCount; ++i)
 			{
 				
-				
+				//CD - Second enemy type now spawns in multiplayer, only one of second enemy type will spawn while the enemy size can be extended to include more of the raptor enemy in one spawn
 				xAxisSpawn += 50 + randomInt(50);
 				sf::Packet packet;
 				packet << static_cast<sf::Int32>(Server::PacketType::SpawnEnemy);

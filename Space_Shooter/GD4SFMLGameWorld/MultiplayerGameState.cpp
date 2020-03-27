@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "MultiplayerGameState.hpp"
 #include "MusicPlayer.hpp"
 #include "Utility.hpp"
@@ -7,7 +11,7 @@
 
 #include <fstream>
 #include <iostream>
-
+//CD - Added by me - few changes made from screencast to acompany our game
 sf::IpAddress getAddressFromFile()
 {
 	{ // Try to open existing file (RAII block)

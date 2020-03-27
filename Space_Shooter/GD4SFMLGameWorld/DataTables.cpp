@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "DataTables.hpp"
 #include "Aircraft.hpp"
 #include "Projectile.hpp"
@@ -9,6 +13,8 @@
 #include "CategoryID.hpp"
 #include "ParticleID.hpp"
 #include "Wall.hpp"
+
+
 
 std::vector<PlayerData> initializePlayerData()
 {
@@ -33,6 +39,7 @@ std::vector<PlayerData> initializePlayerData()
 	return data;
 }
 
+//CD - Edited speed, textures and animation for player aircraft(eagle), edited texture and movement pattern for enemy aircraft(raptor, avenger)
 std::vector<AircraftData> initializeAircraftData()
 {
 	std::vector<AircraftData> data(static_cast<int>(AircraftID::TypeCount));
@@ -134,7 +141,7 @@ std::vector<ParticleData> initializeParticleData()
 	return data;
 }
 
-
+//CD - Added wall data table, Several types of walls with different textures for say long or short wall or horizontal or vertical walls
 std::vector<WallData> initializeWallData()
 {
 	std::vector<WallData> data(static_cast<int>(WallID::WallCount));

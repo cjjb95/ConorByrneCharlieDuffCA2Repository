@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "SettingsState.hpp"
 #include "Utility.hpp"
 #include "ResourceHolder.hpp"

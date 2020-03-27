@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "Aircraft.hpp"
 #include "ResourceHolder.hpp"
 #include "DataTables.hpp"
@@ -18,6 +22,7 @@
 
 namespace
 {
+	//CD - data table for aircraft data
 	const std::vector<AircraftData> Table = initializeAircraftData();
 }
 
@@ -324,6 +329,7 @@ void Aircraft::checkProjectileLaunch(sf::Time dt, CommandQueue& commands)
 
 void Aircraft::createBullets(SceneNode& node, const TextureHolder& textures) const
 {
+	//CD - Edited Bullet positions so they display and work correctly
 	ProjectileID type = isAllied() ? ProjectileID::AlliedBullet : ProjectileID::EnemyBullet;
 
 	switch (mSpreadLevel)
@@ -350,13 +356,14 @@ void Aircraft::createProjectile(SceneNode& node, ProjectileID type, float xOffse
 	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 
 	sf::Vector2f offset(xOffset * mSprite.getGlobalBounds().height, yOffset * mSprite.getGlobalBounds().width);
+	//CD - Edited velocity so projectile moves in correct direction
 	sf::Vector2f velocity(projectile->getMaxSpeed(), 0 );
 
 	float sign = isAllied() ? -1.f : +1.f;
 	projectile->setPosition(getWorldPosition() + offset * sign);
+	//CD - added rotation so projectile displays in correct orientation 
 	projectile->setRotation(90);
 	projectile->setVelocity(-velocity * sign);
-
 	node.attachChild(std::move(projectile));
 }
 
@@ -372,6 +379,7 @@ void Aircraft::createPickup(SceneNode& node, const TextureHolder& textures) cons
 
 void Aircraft::updateTexts()
 {
+	//CD - Edited text position to work with our game
 	mHealthDisplay->setString(toString(getHitpoints()) + " HP");
 	mHealthDisplay->setPosition(-70.f, 0.f);
 	mHealthDisplay->setRotation(-getRotation());
@@ -390,6 +398,7 @@ void Aircraft::updateTexts()
 
 void Aircraft::updateRollAnimation()
 {
+	//CD - Edited code to work with our sprite sheet. Tried implementing a firing animation, causes all player sprites to do fire animation if one player presses fire key
 	if (Table[static_cast<int>(mType)].hasRollAnimation)
 	{
 		sf::IntRect textureRect = Table[static_cast<int>(mType)].textureRect;

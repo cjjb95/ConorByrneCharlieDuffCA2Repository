@@ -9,7 +9,7 @@ added full file
 #include "DataTables.hpp"
 
 
-//added island vector to store island sizes, textureIDs, and categoryIDs
+//CD - added Wall vector to store Wall sizes, textureIDs, and categoryIDs
 namespace
 {
 	const std::vector<WallData> Table = initializeWallData();

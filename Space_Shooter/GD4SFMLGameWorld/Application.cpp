@@ -16,7 +16,7 @@ Application::Application()
 	, mFonts()
 	, mMusic()
 	, mSoundPlayer()
-	, mKeyBinding1(1)
+	, mKeyBinding1(1) //CD - Added key bindings code
 	, mKeyBinding2(2)
 	, mStateStack(State::Context(mWindow, mTextures, mFonts, mMusic, mSoundPlayer, mKeyBinding1, mKeyBinding2))
 	, mStatisticText()
@@ -107,6 +107,7 @@ void Application::updateStatistics(sf::Time dt)
 
 void Application::registerStates()
 {
+	//CD - Added network states
 	mStateStack.registerState<TitleState>(StateID::Title);
 	mStateStack.registerState<MenuState>(StateID::Menu);
 	mStateStack.registerState<GameState>(StateID::Game);

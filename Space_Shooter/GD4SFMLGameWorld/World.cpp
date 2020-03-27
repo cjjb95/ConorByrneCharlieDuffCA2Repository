@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "World.hpp"
 #include "ParticleID.hpp"
 #include "ParticleNode.hpp"
@@ -17,17 +21,17 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, mTextures()
 	, mSceneGraph()
 	, mSceneLayers()
-	, mWorldBounds(0.f, 0.f, 5000.f, mCamera.getSize().y)
+	, mWorldBounds(0.f, 0.f, 5000.f, mCamera.getSize().y) //CD - worldbounds x value is now 5000 long rather than the starting 2000, this will carry over to both local on online, bounds were flipped from original to swap from top down to sidescroller 
 	, mSpawnPosition(mCamera.getSize().x / 2.f, mWorldBounds.height - mCamera.getSize().y / 2.f)
-	, mScrollSpeed(-100.f)
+	, mScrollSpeed(-100.f) //CD -Changed to increase speed of game and make it more fast paced, worldbounds was also adjusted for this reason
 	,mScrollSpeedCompensation(1.f)
 	, mPlayerAircraft()
 	, mEnemySpawnPoints()
 	, mActiveEnemies()
 	, mSpawnPositions()
-	,mWall()
+	,mWall() //CD - walls added to world
 	,mNetworkedWorld(networked)
-	,mNetworkNode(nullptr)
+	,mNetworkNode(nullptr) //CD - Netword node added
 	,mFinishSprite(nullptr)
 
 {
@@ -52,7 +56,7 @@ void World::update(sf::Time dt)
 	for (Aircraft* player : mPlayerAircraft)
 	{
 		player->setVelocity(0.f, 0.f);
-		//player->setRotation(90);
+		//player->setRotation(90);  CD - was used to reposition texture when using older textures
 	}
 
 	// Setup commands to destroy entities, and guide missiles
@@ -287,7 +291,7 @@ void World::handleCollisions()
 			projectile.destroy();
 		}
 
-		else if (matchesCategories(pair, CategoryID::PlayerAircraft, CategoryID::Wall1))
+		else if (matchesCategories(pair, CategoryID::PlayerAircraft, CategoryID::Wall1)) //CD - if player collides with wall, they die
 		{
 			auto& aircraft = static_cast<Aircraft&>(*pair.first);
 			auto& projectile = static_cast<Projectile&>(*pair.second);
@@ -296,7 +300,7 @@ void World::handleCollisions()
 			aircraft.damage(200);
 		}
 
-		else if (matchesCategories(pair, CategoryID::AlliedProjectile, CategoryID::Wall1))
+		else if (matchesCategories(pair, CategoryID::AlliedProjectile, CategoryID::Wall1)) //CD - if player projectiles collide with a wall they are destroyed
 		{
 			auto& projectile = static_cast<Aircraft&>(*pair.first);
 			// destroy projectile if it hits a wall
@@ -356,7 +360,7 @@ void World::buildScene()
 	}
 
 	//Àdd walls - Both Obsticle and Border Walls
-
+	//CD - Walls added for a border along with obsticles. both walls cause death on impact
 	#pragma region ObsticleWalls
 
 	//obsticle walls
@@ -551,6 +555,7 @@ void World::adaptPlayerVelocity()
 
 		// Add scrolling velocity
 		aircraft->accelerate(-mScrollSpeed, 0.f);
+		//CD -Scrolling was flipped so player scrolls horizontally rather than vertically
 	}
 }
 

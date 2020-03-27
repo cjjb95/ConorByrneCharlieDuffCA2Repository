@@ -1,3 +1,7 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "GameState.hpp"
 
 GameState::GameState(StateStack& stack, Context context)

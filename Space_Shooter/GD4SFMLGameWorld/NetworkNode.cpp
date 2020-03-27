@@ -1,7 +1,7 @@
 #include "NetworkNode.hpp"
 #include "NetworkProtocol.hpp"
 #include "CategoryID.hpp"
-
+//CD - Added by me, no changes made from the screencast
 NetworkNode::NetworkNode() : SceneNode()
 , mPendingActions()
 {

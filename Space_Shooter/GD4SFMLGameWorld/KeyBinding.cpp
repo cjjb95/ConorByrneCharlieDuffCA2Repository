@@ -1,9 +1,13 @@
+/*
+Charlie Duff
+D00183790
+*/
 #include "KeyBinding.hpp"
 
 #include <string>
 #include <algorithm>
 
-
+//CD - Added keybindings code from screencast
 KeyBinding::KeyBinding(int controlPreconfiguration)
 	: mKeyMap()
 {
