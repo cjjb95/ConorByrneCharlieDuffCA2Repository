@@ -153,6 +153,7 @@ void GameServer::tick()
 	for (auto pair : mAircraftInfo)
 	{
 
+		std::cout << pair.second.score << std::endl;
 		//std::cout << pair.second.score << std::endl;
 		// As long as one player has not crossed the finish line yet, set variable to false
 		if (pair.second.position.x > 5000.f) {
