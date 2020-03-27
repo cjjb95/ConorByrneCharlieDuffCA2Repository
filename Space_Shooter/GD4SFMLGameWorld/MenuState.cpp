@@ -14,7 +14,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	mBackgroundSprite.setTexture(texture);
 
 	auto playButton = std::make_shared<GUI::Button>(context);
-	playButton->setPosition(100, 300);
+	playButton->setPosition(450, 300);
 	playButton->setText("Play");
 	playButton->setCallback([this]()
 	{
@@ -23,7 +23,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	});
 
 	auto hostPlayButton = std::make_shared<GUI::Button>(context);
-	hostPlayButton->setPosition(100, 350);
+	hostPlayButton->setPosition(450, 350);
 	hostPlayButton->setText("Host");
 	hostPlayButton->setCallback([this]()
 	{
@@ -32,7 +32,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	});
 
 	auto joinPlayButton = std::make_shared<GUI::Button>(context);
-	joinPlayButton->setPosition(100, 400);
+	joinPlayButton->setPosition(450, 400);
 	joinPlayButton->setText("Join");
 	joinPlayButton->setCallback([this]()
 	{
@@ -41,7 +41,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	});
 
 	auto settingsButton = std::make_shared<GUI::Button>(context);
-	settingsButton->setPosition(100, 450);
+	settingsButton->setPosition(450, 450);
 	settingsButton->setText("Settings");
 	settingsButton->setCallback([this]()
 	{
@@ -49,7 +49,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	});
 
 	auto exitButton = std::make_shared<GUI::Button>(context);
-	exitButton->setPosition(100, 500);
+	exitButton->setPosition(450, 500);
 	exitButton->setText("Exit");
 	exitButton->setCallback([this]()
 	{
